@@ -10,6 +10,7 @@ bootstrap.sh
 shell
 .sites_map.json
 outfiles/
+condor/
 *.jdl
 docker_stderror
 *.pkl

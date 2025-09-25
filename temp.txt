@@ -1,0 +1,12 @@
+nohup: ignoring input
+usage: submit_from_yaml.py [-h] --year {2022,2022EE,2023,2023BPix}
+                           [--samples [SAMPLES ...]]
+                           [--subsamples [SUBSAMPLES ...]] [--tag TAG]
+                           [--nano-version {v12,v12v2_private}]
+                           [--script SCRIPT] [--outdir OUTDIR] [--site {lpc}]
+                           [--save-sites {lpc} [{lpc} ...]]
+                           [--files-per-job FILES_PER_JOB]
+                           [--submit | --no-submit] --git-branch GIT_BRANCH
+                           [--allow-diff-local-repo | --no-allow-diff-local-repo]
+                           [--yaml YAML]
+submit_from_yaml.py: error: the following arguments are required: --git-branch

@@ -213,11 +213,11 @@ if __name__ == "__main__":
         required=True,
         choices=[
             "signal-all",
-            "signal-ggf",
-            "control-zgamma",
-            "control-tt",
-            "signal-vh",
-            "signal-vbf",
+            # "signal-ggf",
+            # "control-zgamma",
+            # "control-tt",
+            # "signal-vh",
+            # "signal-vbf",
         ],  # add more as needed
     )
     # Add an argument for the directory name # <--- ADDED

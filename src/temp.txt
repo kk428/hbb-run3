@@ -1,0 +1,2 @@
+nohup: ignoring input
+python: can't open file '/uscms_data/d3/kkrzyzan/hbb-run3/src/src/condor/submit_from_yaml.py': [Errno 2] No such file or directory
