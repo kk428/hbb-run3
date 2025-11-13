@@ -8,7 +8,10 @@ from pathlib import Path
 import awkward as ak
 import dask_awkward as dak
 import numpy as np
+import pandas as pd
 from coffea.analysis_tools import PackedSelection, Weights
+from coffea.ml_tools import xgboost_wrapper
+from dask_awkward import to_dataframe
 from hist.dask import Hist
 
 from hbb.corrections import (
@@ -63,6 +66,7 @@ class categorizer(SkimmerABC):
         systematics=False,
         save_skim=False,
         skim_outpath="",
+        evaluate_BDT=True,
     ):
         super().__init__()
 
@@ -72,6 +76,7 @@ class categorizer(SkimmerABC):
         self._systematics = systematics
         self._save_skim = save_skim
         self._skim_outpath = skim_outpath
+        self._evaluate_BDT = evaluate_BDT
 
         with Path("src/hbb/muon_triggers.json").open() as f:
             self._muontriggers = json.load(f)
@@ -500,6 +505,153 @@ class categorizer(SkimmerABC):
                 skim_path.mkdir(parents=True, exist_ok=True)
             print("Saving skim to: ", skim_path)
 
+            if self._evaluate_BDT and region == "signal-all":
+                # Load pre-trained BDT model
+                # model = xgb.XGBClassifier()
+                # model.load_model('src/hbb/MultiClassBDT_23Oct25.json')
+                # model = xgboost_wrapper('src/hbb/MultiBDT_coffea_3Nov25.json')
+
+                # Prepare features for BDT evaluation
+                bdt_features = [
+                    "nFatJet",
+                    "nJet",
+                    "FatJet0_phi",
+                    "FatJet0_eta",
+                    "FatJet0_n2b1",
+                    "FatJet0_n3b1",
+                    "FatJet1_pt",
+                    "FatJet1_phi",
+                    "FatJet1_eta",
+                    "FatJet1_msd",
+                    "FatJet1_pnetMass",
+                    "FatJet1_pnetTXbb",
+                    "FatJet1_pnetTXcc",
+                    "FatJet1_pnetTXqq",
+                    "FatJet1_pnetTXgg",
+                    "VBFPair_mjj",
+                    "VBFPair_deta",
+                    "Photon0_pt",
+                    "Jet0_pt",
+                    "Jet0_eta",
+                    "Jet0_phi",
+                    "Jet0_mass",
+                    "Jet0_btagPNetB",
+                    "Jet0_btagPNetCvB",
+                    "Jet0_btagPNetCvL",
+                    "Jet0_btagPNetQvG",
+                    "Jet1_pt",
+                    "Jet1_eta",
+                    "Jet1_phi",
+                    "Jet1_mass",
+                    "Jet1_btagPNetB",
+                    "Jet1_btagPNetCvB",
+                    "Jet1_btagPNetCvL",
+                    "Jet1_btagPNetQvG",
+                    "Jet2_pt",
+                    "Jet2_eta",
+                    "Jet2_phi",
+                    "Jet2_mass",
+                    "Jet2_btagPNetB",
+                    "Jet2_btagPNetCvB",
+                    "Jet2_btagPNetCvL",
+                    "Jet2_btagPNetQvG",
+                    "Jet3_pt",
+                    "Jet3_eta",
+                    "Jet3_phi",
+                    "Jet3_mass",
+                    "Jet3_btagPNetB",
+                    "Jet4_btagPNetCvB",
+                    "Jet4_btagPNetCvL",
+                    "Jet4_btagPNetQvG",
+                    "JetClosestFatJet0_pt",
+                    "JetClosestFatJet0_eta",
+                    "JetClosestFatJet0_phi",
+                    "JetClosestFatJet0_mass",
+                ]
+
+                class xgboost_model(xgboost_wrapper):
+                    # Define how to prepare awkward arrays for BDT evaluation
+                    def prepare_awkward(self, events):
+                        ret = ak.concatenate(
+                            [events[name][:, np.newaxis] for name in bdt_features], axis=1
+                        )
+                        return [], {"data": ret}
+
+                model = xgboost_model(Path.cwd() / "MultiClassBDT_23Oct25.ubj")
+
+                # Prepare the BDT input array
+                bdt_dask_arrays = {
+                    "nFatJet": ak.num(goodfatjets, axis=1),
+                    "nJet": ak.num(goodjets, axis=1),
+                    "FatJet0_phi": candidatejet.phi,
+                    "FatJet0_eta": candidatejet.eta,
+                    "FatJet0_n2b1": candidatejet.n2b1,
+                    "FatJet0_n3b1": candidatejet.n3b1,
+                    "FatJet1_pt": subleadingjet.pt,
+                    "FatJet1_phi": subleadingjet.phi,
+                    "FatJet1_eta": subleadingjet.eta,
+                    "FatJet1_msd": subleadingjet.msd,
+                    "FatJet1_pnetMass": subleadingjet.pnetmass,
+                    "FatJet1_pnetTXbb": subleadingjet.particleNet_XbbVsQCD,
+                    "FatJet1_pnetTXcc": subleadingjet.particleNet_XccVsQCD,
+                    "FatJet1_pnetTXqq": subleadingjet.particleNet_XqqVsQCD,
+                    "FatJet1_pnetTXgg": subleadingjet.particleNet_XggVsQCD,
+                    "VBFPair_mjj": vbf_mjj,
+                    "VBFPair_deta": vbf_deta,
+                    "Photon0_pt": leadingphoton.pt,
+                    # AK4 Jets away from FatJet0
+                    "Jet0_pt": jet1_away.pt,
+                    "Jet0_eta": jet1_away.eta,
+                    "Jet0_phi": jet1_away.phi,
+                    "Jet0_mass": jet1_away.mass,
+                    "Jet0_btagPNetB": jet1_away.btagPNetB,
+                    "Jet0_btagPNetCvB": jet1_away.btagPNetCvB,
+                    "Jet0_btagPNetCvL": jet1_away.btagPNetCvL,
+                    "Jet0_btagPNetQvG": jet1_away.btagPNetQvG,
+                    "Jet1_pt": jet2_away.pt,
+                    "Jet1_eta": jet2_away.eta,
+                    "Jet1_phi": jet2_away.phi,
+                    "Jet1_mass": jet2_away.mass,
+                    "Jet1_btagPNetB": jet2_away.btagPNetB,
+                    "Jet1_btagPNetCvB": jet2_away.btagPNetCvB,
+                    "Jet1_btagPNetCvL": jet2_away.btagPNetCvL,
+                    "Jet1_btagPNetQvG": jet2_away.btagPNetQvG,
+                    "Jet2_pt": jet3_away.pt,
+                    "Jet2_eta": jet3_away.eta,
+                    "Jet2_phi": jet3_away.phi,
+                    "Jet2_mass": jet3_away.mass,
+                    "Jet2_btagPNetB": jet3_away.btagPNetB,
+                    "Jet2_btagPNetCvB": jet3_away.btagPNetCvB,
+                    "Jet2_btagPNetCvL": jet3_away.btagPNetCvL,
+                    "Jet2_btagPNetQvG": jet3_away.btagPNetQvG,
+                    "Jet3_pt": jet4_away.pt,
+                    "Jet3_eta": jet4_away.eta,
+                    "Jet3_phi": jet4_away.phi,
+                    "Jet3_mass": jet4_away.mass,
+                    "Jet3_btagPNetB": jet4_away.btagPNetB,
+                    "Jet4_btagPNetCvB": jet4_away.btagPNetCvB,
+                    "Jet4_btagPNetCvL": jet4_away.btagPNetCvL,
+                    "Jet4_btagPNetQvG": jet4_away.btagPNetQvG,
+                    # AK4 Jet away but closest to FatJet0
+                    "JetClosestFatJet0_pt": ak4_closest_ak8.pt,
+                    "JetClosestFatJet0_eta": ak4_closest_ak8.eta,
+                    "JetClosestFatJet0_phi": ak4_closest_ak8.phi,
+                    "JetClosestFatJet0_mass": ak4_closest_ak8.mass,
+                }
+                bdt_dask_arrays = {
+                    key: to_dataframe(value) for key, value in bdt_dask_arrays.items()
+                }
+                bdt_input = pd.DataFrame()
+                for _key, value in bdt_dask_arrays.items():
+                    bdt_input = pd.concat([bdt_input, pd.DataFrame(value)], axis=1)
+                bdt_input.columns = bdt_features
+
+                # Evaluate BDT scores and append to output array
+                bdt_scores = model(bdt_input)
+                output_array["BDT_score"] = dak.from_awkward(
+                    ak.from_numpy(bdt_scores), npartitions=1
+                )
+
             # possible TODO: add systematic weights?
             output["skim"][region] = dak.to_parquet(
                 output_array[cut],
@@ -540,6 +692,7 @@ class categorizer(SkimmerABC):
 
         toc = time.time()
         output["filltime"] = toc - tic
+        print(f"Time to fill histograms: {toc - tic:.2f} seconds")
         if shift_name is None:
             output["weightStats"] = weights.weightStatistics
         return output

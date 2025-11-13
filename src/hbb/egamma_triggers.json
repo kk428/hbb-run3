@@ -2,21 +2,21 @@
     "2022": [
         "Photon200",
         "Photon110EB_TightID_TightIso",
-        "Photon30EB_TightID_TightIso",
+        "Photon30EB_TightID_TightIso"
         ],
     "2022EE": [
         "Photon200",
         "Photon110EB_TightID_TightIso",
-        "Photon30EB_TightID_TightIso",
+        "Photon30EB_TightID_TightIso"
         ],
     "2023": [
         "Photon200",
         "Photon110EB_TightID_TightIso",
-        "Photon30EB_TightID_TightIso",
+        "Photon30EB_TightID_TightIso"
         ],
     "2023BPix": [
         "Photon200",
         "Photon110EB_TightID_TightIso",
-        "Photon30EB_TightID_TightIso",
-        ],
+        "Photon30EB_TightID_TightIso"
+        ]
 }

@@ -88,6 +88,7 @@ def run(year: str, fileset: dict, args: argparse.Namespace):
         xsecs=xsecs,
         year=year,
         save_skim=args.save_skim,
+        evaluate_BDT=args.BDT,
         skim_outpath="outparquet",
     )
 
@@ -225,6 +226,13 @@ if __name__ == "__main__":
         "--save-skim",
         action="store_true",
         help="save skimmed (flat ntuple) files",
+        default=False,
+    )
+
+    parser.add_argument(
+        "--BDT",
+        action="store_true",
+        help="Evaluate BDT scores and use for categorization",
         default=False,
     )
 
