@@ -103,6 +103,8 @@ To run on a single file (starting index at 0, ending index at 1) for one subsamp
 python src/run.py --sample Hbb --subsample GluGluHto2B_PT-200_M-125 --starti 0 --endi 1
 ```
 To save skim, add `--save-skim`
+To save skim with no systematics, add `-save-skim-nosysts`
+To save the AK4 btag efficiencies, add `--btag-eff`
 
 To run on multiple subsamples:
 ```
@@ -113,7 +115,7 @@ python src/run.py --sample Hbb --subsample GluGluHto2B_PT-200_M-125  VBFHto2B_M-
 
 To submit a specific subsample:
 ```bash
-python src/condor/submit.py --tag $TAG  --samples Hbb --subsamples GluGluHto2B_PT-200_M-125 --git-branch main  --allow-diff-local-repo --submit
+python src/condor/submit.py --tag $TAG  --samples Hbb --subsamples GluGluHto2B_PT-200_M-125 --git-branch main  --allow-diff-local-repo --run-mode save-skim --submit
 ```
 - Format your tags as `TAG=YRMonthDay` e.g. `TAG=25May22`.
 - You **must** specify the git branch name
@@ -123,7 +125,7 @@ This will create a set of condor submission files. To submit add: `--submit`.
 
 To submit a set of samples:
 ```bash
-nohup python src/condor/submit_from_yaml.py --tag $TAG --yaml src/submit_configs/${YAML}.yaml --year $YEAR --git-branch main --nano-version v12 --submit &> tmp/submitout.txt &
+nohup python src/condor/submit_from_yaml.py --tag $TAG --yaml src/submit_configs/${YAML}.yaml --year $YEAR --git-branch main --nano-version v12 --run-mode save-skim --submit &> tmp/submitout.txt &
 ```
 
 By default the yaml is: `src/submit_configs/hbb.yaml`.
@@ -132,7 +134,7 @@ For example:
 ```
 # For best practices, the script will automatically check if your code version is up to date in github. If you have changes that are not committed/pushed use --allow-diff-local-repo
 
-python src/condor/submit_from_yaml.py --yaml src/submit_configs/hbb.yaml --tag 25May23 --git-branch main --allow-diff-local-repo --year 2022EE
+python src/condor/submit_from_yaml.py --yaml src/submit_configs/hbb.yaml --tag 25May23 --git-branch main --allow-diff-local-repo --run-mode save-skim --year 2022EE
 ```
 
 To check whether jobs have finished use `src/condor/check_jobs.py`.

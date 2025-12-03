@@ -108,6 +108,7 @@ def main(args):
                     "outdir": sample_dir,
                     "jobnum": j,
                     "nano_version": args.nano_version,
+                    "run_mode": args.run_mode
                 }
                 write_template(sh_templ, localsh, sh_args)
                 os.system(f"chmod u+x {localsh}")
@@ -155,6 +156,13 @@ def parse_args(parser):
         default=False,
         help="Allow the local repo to be different from the specified remote repo (not recommended!)."
         "If false, submit script will exit if the latest commits locally and on Github are different.",
+    )
+    parser.add_argument(
+        "--run-mode",
+        default="save-skim",
+        help="skimmer run mode",
+        type=str,
+        choices=["save-skim", "btag-eff", "save-skim-nosysts"],
     )
 
 

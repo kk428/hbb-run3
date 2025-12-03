@@ -219,11 +219,61 @@ def ggfvbf_rhalphabet(args):
     total_model_bins = []
 
     # TT params
-    tqqeffSF = rl.IndependentParameter('tqqeffSF_{}'.format(year), 1., -50, 50)
-    tqqeffBCSF = rl.IndependentParameter('tqqeffBCSF_{}'.format(year), 1., -50, 50)
-    tqqnormSF = rl.IndependentParameter('tqqnormSF_{}'.format(year), 1., -50, 50)
+    tqqeffSF = rl.IndependentParameter(f'tqqeffSF_{year}', 1., -50, 50)
+    tqqeffBCSF = rl.IndependentParameter(f'tqqeffBCSF_{year}', 1., -50, 50)
+    tqqnormSF = rl.IndependentParameter(f'tqqnormSF_{year}', 1., -50, 50)
 
-    sys_lumi_uncor = rl.NuisanceParameter('CMS_lumi_13TeV_{}'.format(year[:4]), 'lnN')
+    sys_lumi_uncor = rl.NuisanceParameter(f'CMS_lumi_13p6TeV_{year[:4]}', 'lnN')
+
+    #Systematics 
+    sys_dict = {}
+    sys_dict['pileup'] = rl.NuisanceParameter(f'CMS_PU_{year}', 'lnN')
+
+    sys_dict['JES'] = rl.NuisanceParameter(f'CMS_scale_j_{year}', 'lnN')
+    sys_dict['JER'] = rl.NuisanceParameter(f'CMS_res_j_{year}', 'lnN')
+    sys_dict['UES'] = rl.NuisanceParameter(f'CMS_ues_j_{year}', 'lnN')
+
+    sys_dict['MuonPTScale'] = rl.NuisanceParameter(f'CMS_scale_m_{year}', 'lnN')
+    sys_dict['MuonPTRes'] = rl.NuisanceParameter(f'CMS_res_m_{year}', 'lnN')
+
+    sys_dict[f'btagSFb_{year}'] = rl.NuisanceParameter(f'CMS_btagSFb_{year}', 'lnN')
+    sys_dict[f'btagSFc_{year}'] = rl.NuisanceParameter(f'CMS_btagSFc_{year}', 'lnN')
+    sys_dict[f'btagSFlight_{year}'] = rl.NuisanceParameter(f'CMS_btagSFlight_{year}', 'lnN')
+    sys_dict['btagSFb_correlated'] = rl.NuisanceParameter(f'CMS_btagSFb_correlated_{year}', 'lnN')
+    sys_dict['btagSFc_correlated'] = rl.NuisanceParameter(f'CMS_btagSFc_correlated_{year}', 'lnN')
+    sys_dict['btagSFlight_correlated'] = rl.NuisanceParameter(f'CMS_btagSFlight_correlated_{year}', 'lnN')
+
+    exp_systs = [
+        'pileup', 
+        'JES', 'JER', 'JER',
+        f'btagSFb_{year}',
+        f'btagSFc_{year}',
+        f'btagSFlight_{year}'
+        'btagSFb_correlated',
+        'btagSFc_correlated',
+        'btagSFlight_correlated',
+        'MuonPTScale', 'MuonPTRes'
+    ]
+
+    pdf_Higgs_ggF = rl.NuisanceParameter('pdf_Higgs_ggF','lnN')
+    pdf_Higgs_VBF = rl.NuisanceParameter('pdf_Higgs_VBF','lnN')
+    pdf_Higgs_VH  = rl.NuisanceParameter('pdf_Higgs_VH','lnN')
+    pdf_Higgs_ttH = rl.NuisanceParameter('pdf_Higgs_ttH','lnN')
+
+    scale_ggF = rl.NuisanceParameter('QCDscale_ggF', 'lnN')
+    scale_VBF = rl.NuisanceParameter('QCDscale_VBF', 'lnN')
+    scale_VH = rl.NuisanceParameter('QCDscale_VH', 'lnN')
+    scale_ttH = rl.NuisanceParameter('QCDscale_ttH', 'lnN')
+
+    isr_ggF = rl.NuisanceParameter('ISRPartonShower_ggF', 'lnN')
+    isr_VBF = rl.NuisanceParameter('ISRPartonShower_VBF', 'lnN')
+    isr_VH = rl.NuisanceParameter('ISRPartonShower_VH', 'lnN')
+    isr_ttH = rl.NuisanceParameter('ISRPartonShower_ttH', 'lnN')
+
+    fsr_ggF = rl.NuisanceParameter('FSRPartonShower_ggF', 'lnN')
+    fsr_VBF = rl.NuisanceParameter('FSRPartonShower_VBF', 'lnN')
+    fsr_VH = rl.NuisanceParameter('FSRPartonShower_VH', 'lnN')
+    fsr_ttH = rl.NuisanceParameter('FSRPartonShower_ttH', 'lnN')
 
     validbins = {}
 
@@ -407,7 +457,7 @@ def ggfvbf_rhalphabet(args):
     model = rl.Model('testModel_'+year)
 
     # exclude QCD from MC samps
-    samps = ['ggF','VBF','WH','ZH','ttH','Wjets','Zjets','Zjetsbb','ttbar','singlet','VV','EWKW','EWKZ','EWKZbb']
+    samps = ['ggF','VBF','WH','ZH','ttH','Wjets','Zjetsc','Zjetslight','Zjetsbb','ttbar','singlet','VV','EWKW','EWKZc','EWKZlight','EWKZbb']
     sigs = ['ggF','VBF','WH','ZH']
 
     for cat in cats:
@@ -465,6 +515,95 @@ def ggfvbf_rhalphabet(args):
                     if do_systematics:
 
                         sample.autoMCStats(lnN=True)    
+
+                        for sys in exp_systs:
+                            syst_up = get_template(year, tag, sName, region, binindex+1, cat[:3]+'_', obs=msd, syst=sys+'Up')[0]
+                            syst_do = get_template(year, tag, sName, region, binindex+1, cat[:3]+'_', obs=msd, syst=sys+'Down')[0]
+
+                            eff_up = shape_to_num(syst_up,nominal)
+                            eff_do = shape_to_num(syst_do,nominal)
+
+                            sample.setParamEffect(sys_dict[sys], eff_up, eff_do)
+
+                        if "EWKZ" in sName:
+
+                            scale_up = get_template(year, tag, sName, region, binindex+1, cat[:3]+'_', obs=msd, syst='scalevar_7ptUp')[0]
+                            scale_do = get_template(year, tag, sName, region, binindex+1, cat[:3]+'_', obs=msd, syst='scalevar_7ptDown')[0]
+
+                            eff_scale_up = np.sum(scale_up)/np.sum(nominal)
+                            eff_scale_do = np.sum(scale_do)/np.sum(nominal)
+
+                            sample.setParamEffect(scale_VBF,eff_scale_up,eff_scale_do)
+
+
+                        # QCD scale and PDF uncertainties on Higgs signal    
+                        elif sName in ['ggF','VBF','WH','ZH','ggZH','ttH']:
+                            
+                            fsr_up = get_template(year, tag, sName, region, binindex+1, cat[:3]+'_', obs=msd, syst='FSRPartonShowerUp')[0]
+                            fsr_do = get_template(year, tag, sName, region, binindex+1, cat[:3]+'_', obs=msd, syst='FSRPartonShowerDown')[0]
+                            eff_fsr_up = np.sum(fsr_up)/np.sum(nominal)
+                            eff_fsr_do = np.sum(fsr_do)/np.sum(nominal)
+
+                            isr_up = get_template(year, tag, sName, region, binindex+1, cat[:3]+'_', obs=msd, syst='ISRPartonShowerUp')[0]
+                            isr_do = get_template(year, tag, sName, region, binindex+1, cat[:3]+'_', obs=msd, syst='ISRPartonShowerDown')[0]
+                            eff_isr_up = np.sum(isr_up)/np.sum(nominal)
+                            eff_isr_do = np.sum(isr_do)/np.sum(nominal)
+
+                            pdf_up = get_template(year, tag, sName, region, binindex+1, cat[:3]+'_', obs=msd, syst='PDF_weightUp')[0]
+                            pdf_do = get_template(year, tag, sName, region, binindex+1, cat[:3]+'_', obs=msd, syst='PDF_weightDown')[0]
+                            eff_pdf_up = np.sum(pdf_up)/np.sum(nominal)
+                            eff_pdf_do = np.sum(pdf_do)/np.sum(nominal)
+                            
+                            if sName == 'ggF':
+                                scale_up = get_template(year, tag, sName, region, binindex+1, cat[:3]+'_', obs=msd, syst='scalevar_7ptUp')[0]
+                                scale_do = get_template(year, tag, sName, region, binindex+1, cat[:3]+'_', obs=msd, syst='scalevar_7ptDown')[0]
+                                
+                                eff_scale_up = np.sum(scale_up)/np.sum(nominal)
+                                eff_scale_do = np.sum(scale_do)/np.sum(nominal)
+
+                                sample.setParamEffect(scale_ggF,eff_scale_up,eff_scale_do)
+                                sample.setParamEffect(pdf_Higgs_ggF,eff_pdf_up,eff_pdf_do)
+                                sample.setParamEffect(fsr_ggF,eff_fsr_up,eff_fsr_do)
+                                sample.setParamEffect(isr_ggF,eff_isr_up,eff_isr_do)
+
+                            elif sName == 'VBF':
+                                scale_up = get_template(year, tag, sName, region, binindex+1, cat[:3]+'_', obs=msd, syst='scalevar_3ptUp')[0]
+                                scale_do = get_template(year, tag, sName, region, binindex+1, cat[:3]+'_', obs=msd, syst='scalevar_3ptDown')[0]
+
+                                eff_scale_up = np.sum(scale_up)/np.sum(nominal)
+                                eff_scale_do = np.sum(scale_do)/np.sum(nominal)
+
+                                sample.setParamEffect(scale_VBF,eff_scale_up,eff_scale_do)
+                                sample.setParamEffect(pdf_Higgs_VBF,eff_pdf_up,eff_pdf_do)
+                                sample.setParamEffect(fsr_VBF,eff_fsr_up,eff_fsr_do)
+                                sample.setParamEffect(isr_VBF,eff_isr_up,eff_isr_do)
+                                    
+                            elif sName in ['WH','ZH','ggZH']:
+                                scale_up = get_template(year, tag, sName, region, binindex+1, cat[:3]+'_', obs=msd, syst='scalevar_3ptUp')[0]
+                                scale_do = get_template(year, tag, sName, region, binindex+1, cat[:3]+'_', obs=msd, syst='scalevar_3ptDown')[0]
+
+                                eff_scale_up = np.sum(scale_up)/np.sum(nominal)
+                                eff_scale_do = np.sum(scale_do)/np.sum(nominal)
+
+                                if eff_scale_do < 0:
+                                    eff_scale_do = eff_scale_up
+
+                                sample.setParamEffect(scale_VH,eff_scale_up,eff_scale_do)
+                                sample.setParamEffect(pdf_Higgs_VH,eff_pdf_up,eff_pdf_do)
+                                sample.setParamEffect(fsr_VH,eff_fsr_up,eff_fsr_do)
+                                sample.setParamEffect(isr_VH,eff_isr_up,eff_isr_do)
+                                
+                            elif sName == 'ttH':
+                                scale_up = get_template(year, tag, sName, region, binindex+1, cat[:3]+'_', obs=msd, syst='scalevar_7ptUp')[0]
+                                scale_do = get_template(year, tag, sName, region, binindex+1, cat[:3]+'_', obs=msd, syst='scalevar_7ptDown')[0]
+
+                                eff_scale_up = np.sum(scale_up)/np.sum(nominal)
+                                eff_scale_do = np.sum(scale_do)/np.sum(nominal)
+
+                                sample.setParamEffect(scale_ttH,eff_scale_up,eff_scale_do)
+                                sample.setParamEffect(pdf_Higgs_ttH,eff_pdf_up,eff_pdf_do)
+                                sample.setParamEffect(fsr_ttH,eff_fsr_up,eff_fsr_do)
+                                sample.setParamEffect(isr_ttH,eff_isr_up,eff_isr_do)
 
                     ch.addSample(sample)
 
@@ -606,7 +745,7 @@ def ggfvbf_rhalphabet(args):
     muonCR_model = rl.Model('muonCR_'+year)
     if do_muon_CR:
         templates = {}
-        samps = ['QCD','ttbar','singlet','Wjets','Zjets','Zjetsbb']
+        samps = ['QCD','ttbar','singlet','Wjets','Zjetsc','Zjetslight','Zjetsbb']
         for region in ['pass_bb_', 'pass_cc_', 'fail_']:
 
             ch_name = 'muonCR%s%s' % (region.replace("_", ""), year)

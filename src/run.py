@@ -24,7 +24,7 @@ def run(year: str, fileset: dict, args: argparse.Namespace):
 
     local_dir = Path().resolve()
 
-    if args.save_skim:
+    if args.save_skim or args.save_skim_nosysts:
         # intermediate files are stored in the "./outparquet" local directory
         local_parquet_dir = local_dir / "outparquet"
         if local_parquet_dir.is_dir():
@@ -87,9 +87,12 @@ def run(year: str, fileset: dict, args: argparse.Namespace):
     p = categorizer(
         xsecs=xsecs,
         year=year,
+        nano_version=args.nano_version,
         save_skim=args.save_skim,
         evaluate_BDT=args.BDT,
         skim_outpath="outparquet",
+        btag_eff=args.btag_eff,
+        save_skim_nosysts=args.save_skim_nosysts,
     )
 
     full_tg, rep = apply_to_fileset(
@@ -114,27 +117,36 @@ def run(year: str, fileset: dict, args: argparse.Namespace):
     # otherwise it will complain about too many small files
     # This is the CORRECTED version of the file-combining block for run.py
 
-    if args.save_skim:
+    if args.save_skim or args.save_skim_nosysts:
+
         import pandas as pd
         import pyarrow as pa
         import pyarrow.parquet as pq
 
-        # only find subfolders with parquet files
-        parquet_folders = set()
-        for parquet_file in local_parquet_dir.rglob("*.parquet"):
-            parquet_folders.add(str(parquet_file.parent.resolve()))
+        jer_vars = []
+        for entry in Path(local_parquet_dir).iterdir():
+            if entry.is_dir():
+                jer_vars.append(entry.name)
 
-        for folder in parquet_folders:
-            full_path = Path(folder)
-            # This is the simpler, correct way to get the region name
-            region_name = full_path.name
-            pddf = pd.read_parquet(folder)
+        # compile parquet files from each jer_var/region/ directory
+        # save as {jer_var}_{region_name}.parquet for easy transfer
+        for local_var in jer_vars:
+            # only find subfolders with parquet files
+            parquet_folders = set()
+            for parquet_file in Path(local_parquet_dir / local_var).rglob("*.parquet"):
+                parquet_folders.add(str(parquet_file.parent.resolve()))
 
-            table = pa.Table.from_pandas(pddf)
-            # This saves the combined file as {region_name}.parquet locally
-            output_file = f"{local_dir}/{region_name}.parquet"
-            pq.write_table(table, output_file)
-            print("Saved parquet file to ", output_file)
+            for folder in parquet_folders:
+                full_path = Path(folder)
+                # This is the simpler, correct way to get the region name
+                region_name = full_path.name
+                pddf = pd.read_parquet(folder)
+
+                table = pa.Table.from_pandas(pddf)
+                # This saves the combined file as {local_var}_{region_name}.parquet locally
+                output_file = f"{local_dir}/{local_var}_{region_name}.parquet"
+                pq.write_table(table, output_file)
+                print("Saved parquet file to ", output_file)
 
         # remove subfolder
         print("Removing temporary folder: ", local_parquet_dir)
@@ -203,11 +215,8 @@ if __name__ == "__main__":
     parser.add_argument(
         "--nano-version",
         type=str,
-        default="v12",
-        choices=[
-            "v12",
-            "v12v2_private",
-        ],
+        default="v14_private",
+        choices=["v12", "v12v2_private", "v14_private", "v15"],
         help="NanoAOD version",
     )
     parser.add_argument(
@@ -222,10 +231,23 @@ if __name__ == "__main__":
     parser.add_argument(
         "--yaml", default=None, help="yaml file with samples and subsamples", type=str
     )
-    parser.add_argument(
+    group = parser.add_mutually_exclusive_group()
+    group.add_argument(
         "--save-skim",
         action="store_true",
         help="save skimmed (flat ntuple) files",
+        default=False,
+    )
+    group.add_argument(
+        "--btag-eff",
+        action="store_true",
+        help="compute b-tag efficiencies for mc",
+        default=False,
+    )
+    group.add_argument(
+        "--save-skim-nosysts",
+        action="store_true",
+        help="save skimmed files, skip systematics",
         default=False,
     )
 

@@ -22,4 +22,5 @@ nobackup/
 fitting/results/
 fitting/templates/
 plots/
+*.txt
 *.ipynb_checkpoints/

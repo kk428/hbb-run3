@@ -9,6 +9,8 @@ import logging
 from abc import abstractmethod
 
 from coffea import processor
+import awkward as ak
+import numpy as np
 
 from hbb.common_vars import LUMI
 
@@ -45,6 +47,19 @@ class SkimmerABC(processor.ProcessorABC):
         print("weight_norm", weight_norm)
 
         return weight_norm
+
+    def normalize(self, val, cut):
+        """
+        Fills dak.array nones with nan and applies selection cut
+        Used for filling hist.Hist, 
+        where the events with nones in the object collections throw errors on fill during compute
+        """
+        if cut is None:
+            ar = ak.fill_none(val, np.nan)
+            return ar
+        else:
+            ar = ak.fill_none(val[cut], np.nan)
+            return ar
 
     @abstractmethod
     def add_weights(self) -> tuple[dict, dict]:

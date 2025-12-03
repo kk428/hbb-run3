@@ -93,7 +93,7 @@ def get_files(dataset, version):
             ],
             "regex_sites": None,
         }
-        if version == "v12":
+        if not "private" in version:
             sites_cfg["whitelist_sites"] = ["T1_US_FNAL_Disk", "T3_US_FNALLPC"]
 
         files_rucio, sites = get_dataset_files(dataset, **sites_cfg, output="first")
@@ -116,7 +116,7 @@ def get_files(dataset, version):
 
 def main():
     version = sys.argv[1]
-    allowed_values = ["v12", "v12v2_private"]
+    allowed_values = ["v12", "v12v2_private", "v14_private", "v15"]
 
     try:
         version = sys.argv[1]

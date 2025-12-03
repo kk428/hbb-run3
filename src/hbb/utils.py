@@ -15,15 +15,12 @@ import pandas as pd
 import pyarrow as pa
 from coffea.analysis_tools import PackedSelection
 
-# ... other imports
-
 P4 = {
     "eta": "Eta",
     "phi": "Phi",
     "mass": "Mass",
     "pt": "Pt",
 }
-
 
 def add_selection(
     name: str,
@@ -81,7 +78,7 @@ def get_sum_genweights(data_dir: Path, dataset: str) -> float:
             # The sum of weights is stored in the "sumw" key
             # You can access it like this:
             for key in out_dict:
-                sumw = next(iter(out_dict[key]["sumw"].values()))
+                sumw = next(iter(out_dict[key]["nominal"]["sumw"].values()))
             total_sumw += sumw
     except:
         warnings.warn(
@@ -102,6 +99,7 @@ def load_samples(
     region: str,
     extra_columns: dict[str] = None,
     filters: list[tuple[str, str, str]] = None,
+    variation: str = None,
 ) -> dict[str, pd.DataFrame]:
     """
     Load samples from a specified directory and return them as a dictionary.
@@ -127,8 +125,10 @@ def load_samples(
             # print(list(Path(data_dir / dataset / "parquet").glob(f'{region}*.parquet')))
             # print(f"Columns to load: {columns_to_load}")
 
-            search_path = Path(data_dir / dataset / "parquet" / region)
-            # print(f"\n[DEBUG] Script is searching in path: {search_path}\n")
+            search_path = Path(data_dir / dataset / "parquet" / "nominal" / region)
+            if variation:
+                search_path = Path(data_dir / dataset /  "parquet" / variation / region)
+            print(f"\n[DEBUG] Script is searching in path: {search_path}\n")
 
             # --- REPLACE THE OLD 'try' BLOCK WITH THIS ---
             try:
@@ -185,6 +185,7 @@ def load_samples(
 
                 events["weight_nonorm"] = events["weight"]
                 events["finalWeight"] = events["weight"] / sum_genweights
+                events["sum_genWeight"] = sum_genweights
             else:
                 # For data, we just keep the weight as is
                 events["weight_nonorm"] = events["weight"]
