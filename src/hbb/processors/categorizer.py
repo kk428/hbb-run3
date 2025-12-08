@@ -564,7 +564,7 @@ class categorizer(SkimmerABC):
             # Evaluate BDT
             bdt_model = self.bdt_model
             bdt_scores = bdt_model(bdt_input)
-            bdt_scores = dak.from_awkward(ak.from_numpy(bdt_scores), npartitions=1)
+            bdt_scores = ak.from_numpy(bdt_scores)
 
             # assign scores to selections
             selection.add("BDTisVBF", (bdt_scores == 0))
