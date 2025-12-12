@@ -71,6 +71,7 @@ gen_selection_dict = {
     "ZGto2QG-": gen_selection_Vg,
 }
 
+
 def get_BDT_model(BDT_file: str):
     bdt_features = [
         "nFatJet",
@@ -133,10 +134,11 @@ def get_BDT_model(BDT_file: str):
         # Define how to prepare awkward arrays for BDT evaluation
         def prepare_awkward(self, events):
             ret = ak.concatenate([events[name][:, np.newaxis] for name in bdt_features], axis=1)
-            return [], {"data": ret}
+            return [], dict(data=ret)
 
     model = xgboost_model(Path.cwd() / BDT_file)
     return model
+
 
 class categorizer(SkimmerABC):
     def __init__(
@@ -497,7 +499,7 @@ class categorizer(SkimmerABC):
 
         if self._evaluate_BDT:
             # Construct BDT input
-            bdt_dask_arrays = {
+            bdt_ak_array = {
                 "nFatJet": ak.num(goodfatjets, axis=1),
                 "nJet": ak.num(goodjets, axis=1),
                 "FatJet0_phi": candidatejet.phi,
@@ -516,7 +518,6 @@ class categorizer(SkimmerABC):
                 "VBFPair_mjj": vbf_mjj,
                 "VBFPair_deta": vbf_deta,
                 "Photon0_pt": vgammaphoton.pt,
-                # AK4 Jets away from FatJet0
                 "Jet0_pt": jet1_away.pt,
                 "Jet0_eta": jet1_away.eta,
                 "Jet0_phi": jet1_away.phi,
@@ -549,21 +550,23 @@ class categorizer(SkimmerABC):
                 "Jet4_btagPNetCvB": jet4_away.btagPNetCvB,
                 "Jet4_btagPNetCvL": jet4_away.btagPNetCvL,
                 "Jet4_btagPNetQvG": jet4_away.btagPNetQvG,
-                # AK4 Jet away but closest to FatJet0
                 "JetClosestFatJet0_pt": ak4_closest_ak8.pt,
                 "JetClosestFatJet0_eta": ak4_closest_ak8.eta,
                 "JetClosestFatJet0_phi": ak4_closest_ak8.phi,
                 "JetClosestFatJet0_mass": ak4_closest_ak8.mass,
             }
-            bdt_dask_arrays = {key: to_dataframe(value) for key, value in bdt_dask_arrays.items()}
-            bdt_input = pd.DataFrame()
-            for _key, value in bdt_dask_arrays.items():
-                bdt_input = pd.concat([bdt_input, pd.DataFrame(value)], axis=1)
-            bdt_input.columns = bdt_dask_arrays.keys()
+            bdt_input = ak.zip(bdt_ak_array)
+            # bdt_ak_array = {key: to_dataframe(value) for key, value in bdt_ak_array.items()}
+            # bdt_input = pd.DataFrame()
+            # for _key, value in bdt_ak_array.items():
+            #     bdt_input = pd.concat([bdt_input, pd.DataFrame(value)], axis=1)
+            # bdt_input.columns = bdt_ak_array.keys()
 
             # Evaluate BDT
             bdt_model = self.bdt_model
+            # bdt_scores = bdt_model(bdt_input)
             bdt_scores = bdt_model(bdt_input)
+            print(bdt_scores)
             bdt_scores = ak.from_numpy(bdt_scores)
 
             # assign scores to selections
