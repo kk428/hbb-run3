@@ -96,6 +96,8 @@ class categorizer(SkimmerABC):
         self._skim_outpath = skim_outpath
         self._btag_eff = btag_eff
         self._btagger, self._btag_wp = "btagPNetB", "M"
+        if year == "2024":
+            self._btagger = "btagUParTAK4B"
         self._btag_cut = b_taggers[self._year]["AK4"][self._btagger][self._btag_wp]
         self._mupt_type = "ptcorr"
 
