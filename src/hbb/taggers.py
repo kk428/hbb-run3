@@ -46,5 +46,17 @@ b_taggers = {
                 }
             }
 
+        },
+    "2024": {
+        "AK4": {
+            "btagUParTAK4B" : {  #Only tagger supported from 2024 forward
+                "L" : 0.0246,
+                "M" : 0.1272,
+                "T" : 0.4648,
+                "XT" : 0.6298,
+                "XXT" : 0.9739
+                }
+            }
+
         }
 }

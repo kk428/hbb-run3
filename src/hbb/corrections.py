@@ -104,13 +104,17 @@ def add_pileup_weight(weights: Weights, year: str, nPU):
     values = {}
 
     cset = correctionlib.CorrectionSet.from_file(get_pog_json("pileup", year))
+    if year == "2024":
+        pog_json_file = Path(f"{package_path}/hbb/data/puWeights_2024.json")
+        cset = correctionlib.CorrectionSet.from_file(pog_json_file)
+
     corr = {
         "2018": "Collisions18_UltraLegacy_goldenJSON",
         "2022": "Collisions2022_355100_357900_eraBCD_GoldenJson",
         "2022EE": "Collisions2022_359022_362760_eraEFG_GoldenJson",
         "2023": "Collisions2023_366403_369802_eraBC_GoldenJson",
         "2023BPix": "Collisions2023_369803_370790_eraD_GoldenJson",
-        #"2024": "", Not yet derived by pog
+        "2024": "Pileup",
     }[year]
     # evaluate and clip up to 4 to avoid large weights
     values["nominal"] = ak_clip(cset[corr].evaluate(nPU, "nominal"), 0, 4)
@@ -239,7 +243,7 @@ def get_jetveto_event(jets: JetArray, year: str):
         "2022EE": "Summer22EE_23Sep2023_RunEFG_V1",
         "2023": "Summer23Prompt23_RunC_V1",
         "2023BPix": "Summer23BPixPrompt23_RunD_V1",
-        "2024": "Summer24Prompt24",
+        "2024": "Summer24Prompt24_RunBCDEFGHI_V1",
     }[year]
 
     jet_veto = get_veto(j, nj, corr_str) > 0
@@ -481,7 +485,7 @@ def add_photon_weights(weights: Weights, year: str, photons):
         "2022EE" : "2022Re-recoE+PromptFG",
         "2023" : "2023PromptC",
         "2023BPix" : "2023PromptD",
-        # "2024"    #TODO double check
+        "2024" : "2024",
     }
 
     cset = correctionlib.CorrectionSet.from_file(get_pog_json("photon", year))
