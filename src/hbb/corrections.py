@@ -81,6 +81,7 @@ lumiMasks = {
     "2022EE": build_lumimask("Cert_Collisions2022_355100_362760_Golden.json"),
     "2023": build_lumimask("Cert_Collisions2023_366442_370790_Golden.json"),
     "2023BPix": build_lumimask("Cert_Collisions2023_366442_370790_Golden.json"),
+    "2024": []
 }
 
 
@@ -98,6 +99,7 @@ def add_pileup_weight(weights: Weights, year: str, nPU):
         "2022EE": "Collisions2022_359022_362760_eraEFG_GoldenJson",
         "2023": "Collisions2023_366403_369802_eraBC_GoldenJson",
         "2023BPix": "Collisions2023_369803_370790_eraD_GoldenJson",
+        "2024": ""
     }[year]
     # evaluate and clip up to 4 to avoid large weights
     values["nominal"] = ak_clip(cset[corr].evaluate(nPU, "nominal"), 0, 4)
@@ -132,6 +134,7 @@ def get_jetveto_event(jets: JetArray, year: str):
         "2022EE": "Summer22EE_23Sep2023_RunEFG_V1",
         "2023": "Summer23Prompt23_RunC_V1",
         "2023BPix": "Summer23BPixPrompt23_RunD_V1",
+        "2024": ""
     }[year]
 
     jet_veto = get_veto(j, nj, corr_str) > 0
