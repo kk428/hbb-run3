@@ -10,6 +10,10 @@ from coffea.nanoevents.methods.nanoaod import (
     PhotonArray,
 )
 
+from hbb.corrections import (
+    correct_jetid,
+)
+
 
 def trig_match_sel(
     events, objects, trig_objects, year, trigger, filterbit, ptcut, HLTs, trig_dR=0.2
@@ -69,32 +73,8 @@ def good_electrons(electrons: ElectronArray):
     return electrons[sel]
 
 
-def set_ak4jets(jets: JetArray):
-    """
-    Jet ID fix for NanoAOD v12 copying
-    # https://gitlab.cern.ch/cms-jetmet/coordination/coordination/-/issues/117#note_8880716
-    """
-
-    jetidtightbit = (jets.jetId & 2) == 2
-    jetidtight = (
-        ((np.abs(jets.eta) <= 2.7) & jetidtightbit)
-        | (
-            ((np.abs(jets.eta) > 2.7) & (np.abs(jets.eta) <= 3.0))
-            & jetidtightbit
-            & (jets.neHEF >= 0.99)
-        )
-        | ((np.abs(jets.eta) > 3.0) & jetidtightbit & (jets.neEmEF < 0.4))
-    )
-
-    jetidtightlepveto = (
-        (np.abs(jets.eta) <= 2.7) & jetidtight & (jets.muEF < 0.8) & (jets.chEmEF < 0.8)
-    ) | ((np.abs(jets.eta) > 2.7) & jetidtight)
-
-    jets["jetidtight"] = jetidtight
-    jets["jetidtightlepveto"] = jetidtightlepveto
-
-    # TODO: Add PNet pt regression
-
+def set_ak4jets(jets: JetArray, year):
+    jets = correct_jetid(jets, "AK4", year) 
     return jets
 
 
@@ -104,12 +84,12 @@ def good_ak4jets(jets: JetArray):
     # PuID might only be needed for forward region (WIP)
 
     # JETID: https://twiki.cern.ch/twiki/bin/viewauth/CMS/JetID13p6TeV
-    sel = (jets.pt > 30) & (jets.jetidtight) & (jets.jetidtightlepveto) & (abs(jets.eta) < 5.0)
+    sel = (jets.pt > 30) &(abs(jets.eta) < 5.0) & (jets.jetidtight) & (jets.jetidtightlepveto)
 
     return jets[sel]
 
 
-def set_ak8jets(fatjets: FatJetArray):
+def set_ak8jets(fatjets: FatJetArray, year):
     fatjets["msd"] = fatjets.msoftdrop
     fatjets["qcdrho"] = 2 * np.log(fatjets.msd / fatjets.pt)
     fatjets["pnetmass"] = fatjets.particleNet_massCorr * (1 - fatjets.rawFactor) * fatjets.mass
@@ -127,10 +107,12 @@ def set_ak8jets(fatjets: FatJetArray):
         fatjets["ParTmassRes"] = fatjets.globalParT_massRes * (1 - fatjets.rawFactor) * fatjets.mass
         fatjets["ParTmassVis"] = fatjets.globalParT_massVis * (1 - fatjets.rawFactor) * fatjets.mass
 
+    fatjets = correct_jetid(fatjets, "AK8", year) 
+
     return fatjets
 
 
 # ak8 jet definition
 def good_ak8jets(fatjets: FatJetArray):
-    sel = fatjets.isTight & (fatjets.pt > 200) & (abs(fatjets.eta) < 2.5)
+    sel = (fatjets.pt > 200) & (abs(fatjets.eta) < 2.5) & fatjets.jetidtight
     return fatjets[sel]

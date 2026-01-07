@@ -1,12 +1,42 @@
 nohup: ignoring input
-usage: submit_from_yaml.py [-h] --year {2022,2022EE,2023,2023BPix}
-                           [--samples [SAMPLES ...]]
-                           [--subsamples [SUBSAMPLES ...]] [--tag TAG]
-                           [--nano-version {v12,v12v2_private}]
-                           [--script SCRIPT] [--outdir OUTDIR] [--site {lpc}]
-                           [--save-sites {lpc} [{lpc} ...]]
-                           [--files-per-job FILES_PER_JOB]
-                           [--submit | --no-submit] --git-branch GIT_BRANCH
-                           [--allow-diff-local-repo | --no-allow-diff-local-repo]
-                           [--yaml YAML]
-submit_from_yaml.py: error: the following arguments are required: --git-branch
+56b80a7061ba1efc289a8cdaaba02e9ef1e59d3b	refs/heads/main
+ M .gitignore
+ D .pre-commit-config.yaml
+ M data/nanoindex_v12.json
+ M python/common.py
+ M python/load_one_sample.ipynb
+ M python/make_histos.py
+ M python/plot_histos.py
+ M src/hbb/corrections.py
+ M src/hbb/processors/categorizer.py
+ M src/hbb/processors/objects.py
+ M src/hbb/run_utils.py
+ M src/run.py
+ M src/submit_configs/hbb.yaml
+ M submit.py
+ M temp.txt
+ D ~./nobackup/pre-commit/.pre-commit-cache/.lock
+ D ~./nobackup/pre-commit/.pre-commit-cache/README
+ D ~./nobackup/pre-commit/.pre-commit-cache/db.db
+Submitting job(s).
+1 job(s) submitted to cluster 1768467.
+Querying the CMS LPC pool and trying to find an available schedd...
+
+Attempting to submit jobs to lpcschedd4.fnal.gov
+
+Submitting for year 2022
+Namespace(year='2022', samples=['VBSWLWLToJets_Minus'], subsamples=[], tag='121825', nano_version='v12', script='src/run.py', outdir='outfiles', site='lpc', save_sites=['lpc'], files_per_job=1, submit=True, git_branch='main', allow_diff_local_repo=True, yaml='src/submit_configs/hbb.yaml')
+Using branch main
+There are local changes that have not been committed!
+Proceeding anyway...
+Latest local and github commits do not match!
+Local commit hash: 87c85a65a6fa5607dacf57071aa0fb8fbcd13cbd
+Remote commit hash: 58e50f9d5bb85a9ce10df3c71bc320b5070ae089
+Proceeding anyway...
+Condor work dir:  condor/121825_v12
+[]
+This is sample: VBSWLWLToJets_Minus
+{'VBSWLWLToJets_Minus': ['/eos/uscms/store/user/jennetd/vv/from_David/VBS_SSWW_Polarized/VBSWLWLToJets_Minus/NanoAODv15_VBSWLWLToJets_Minus_Run3Summer24wmLHEGS_Nanov15_9.root']}
+fileset: {'VBSWLWLToJets_Minus': {'VBSWLWLToJets_Minus': 1}}
+Submitting VBSWLWLToJets_Minus
+Total 1 jobs

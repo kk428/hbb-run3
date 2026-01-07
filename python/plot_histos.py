@@ -166,7 +166,7 @@ if __name__ == "__main__":
         type=str,
         required=True,
         nargs="+",  # Accepts one or more arguments, if more arguments are given, then histograms are summed
-        choices=["2022", "2022EE", "2023", "2023BPix"],
+        choices=["2022", "2022EE", "2023", "2023BPix", "2024"],
     )
     parser.add_argument(
         "--indir",

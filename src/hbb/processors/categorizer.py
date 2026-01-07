@@ -59,7 +59,7 @@ gen_selection_dict = {
 class categorizer(SkimmerABC):
     def __init__(
         self,
-        year="2022",
+        year="2024",
         xsecs: dict = None,
         systematics=False,
         save_skim=False,
@@ -203,9 +203,9 @@ class categorizer(SkimmerABC):
         selection.add("metfilter", metfilter)
         del metfilter
 
-        fatjets = set_ak8jets(events.FatJet)
+        fatjets = set_ak8jets(events.FatJet, self._year)
         goodfatjets = good_ak8jets(fatjets)
-        goodjets = good_ak4jets(set_ak4jets(events.Jet))
+        goodjets = good_ak4jets(set_ak4jets(events.Jet, self._year))
 
         cut_jetveto = get_jetveto_event(goodjets, self._year)
         selection.add("ak4jetveto", cut_jetveto)
@@ -253,7 +253,7 @@ class categorizer(SkimmerABC):
             ak.max(ak4_outside_ak8.btagPNetB, axis=1, mask_identity=False) > btag_cut,
         )
 
-        met = events.MET
+        met = events.PFMET
         selection.add("lowmet", met.pt < 140.0)
 
         # VBF specific variables
@@ -315,7 +315,7 @@ class categorizer(SkimmerABC):
             )
             selmatchedBoson = ak.mask(matchedBoson, match_mask)
             genflavor = bosonFlavor(selmatchedBoson)
-            # genBosonPt = ak.fill_none(ak.firsts(bosons.pt), 0)
+            genBosonPt = ak.fill_none(ak.firsts(bosons.pt), 0)
 
         # softdrop mass, 0 for genflavor == 0
         msd_matched = candidatejet.msd * (genflavor > 0) + candidatejet.msd * (genflavor == 0)
@@ -403,10 +403,10 @@ class categorizer(SkimmerABC):
         if self._save_skim:
             # define "flat" output array
             output_array = {
-                # "GenBoson_pt": genBosonPt,
-                # "GenFlavor": genflavor,
-                # "nFatJet": ak.num(goodfatjets, axis=1),
-                # "nJet": ak.num(goodjets, axis=1),
+                "GenBoson_pt": genBosonPt,
+                "GenFlavor": genflavor, # if not 0, then matched
+                "nFatJet": ak.num(goodfatjets, axis=1),
+                "nJet": ak.num(goodjets, axis=1),
                 "FatJet0_pt": candidatejet.pt,
                 "FatJet0_phi": candidatejet.phi,
                 "FatJet0_eta": candidatejet.eta,

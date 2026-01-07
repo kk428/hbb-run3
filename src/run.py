@@ -183,7 +183,7 @@ if __name__ == "__main__":
         help="year",
         type=str,
         default="2023",
-        choices=["2022", "2022EE", "2023", "2023BPix"],
+        choices=["2022", "2022EE", "2023", "2023BPix", "2024"],
     )
     parser.add_argument("--starti", default=0, help="start index of files", type=int)
     parser.add_argument("--endi", default=-1, help="end index of files", type=int)

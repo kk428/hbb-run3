@@ -13,7 +13,7 @@ def parse_common_args(parser):
         help="year",
         type=str,
         required=True,
-        choices=["2022", "2022EE", "2023", "2023BPix"],
+        choices=["2022", "2022EE", "2023", "2023BPix", "2024"],
     )
     parser.add_argument(
         "--samples",
@@ -58,7 +58,7 @@ def check_branch(git_branch: str, allow_diff_local_repo: bool = False):
     """Check that specified git branch exists in the repo, and local repo is up-to-date"""
     assert not bool(
         os.system(
-            f'git ls-remote --exit-code --heads "https://github.com/DAZSLE/hbb-run3" "{git_branch}"'
+            f'git ls-remote --exit-code --heads "https://github.com/kk428/hbb-run3" "{git_branch}"'
         )
     ), f"Branch {git_branch} does not exist"
 
@@ -124,7 +124,9 @@ def get_fileset(
     fileset = {}
 
     for sample in samples:
+        print("This is sample: " + sample)
         sample_set = full_fileset_nano[year][sample]
+        print(sample_set)
         set_subsamples = list(sample_set.keys())
 
         # check if any subsamples for this sample have been specified

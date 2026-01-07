@@ -33,11 +33,13 @@ pog_correction_path = "/cvmfs/cms.cern.ch/rsync/cms-nanoAOD/jsonpog-integration/
 pog_jsons = {
     "muon": ["MUO", "muon_Z.json.gz"],
     "electron": ["EGM", "electron.json.gz"],
+    "photon": ["EGM", "photon.json.gz"],
     "pileup": ["LUM", "puWeights.json.gz"],
     "fatjet_jec": ["JME", "fatJet_jerc.json.gz"],
     "jet_jec": ["JME", "jet_jerc.json.gz"],
     "jetveto": ["JME", "jetvetomaps.json.gz"],
     "btagging": ["BTV", "btagging.json.gz"],
+    "jetid" : ["JME", "jetid.json.gz"],
 }
 
 years = {
@@ -45,6 +47,7 @@ years = {
     "2022EE": "2022_Summer22EE",
     "2023": "2023_Summer23",
     "2023BPix": "2023_Summer23BPix",
+    "2024": "2024_Summer24",
 }
 
 
@@ -135,3 +138,40 @@ def get_jetveto_event(jets: JetArray, year: str):
 
     event_sel = ~(ak.any((jets.pt > 15) & jet_veto, axis=1))
     return event_sel
+
+def correct_jetid(jets, jet_type: str, year: str):
+    """
+    Apply jetid correction for v14+
+    https://twiki.cern.ch/twiki/bin/view/CMS/JetID13p6TeV#nanoAOD_Flags
+    https://gitlab.cern.ch/cms-nanoAOD/jsonpog-integration/-/blob/199ba071f68176a815615651f8a5ae939ef0793e/examples/jetidExample.py
+    """
+    evaluator = correctionlib.CorrectionSet.from_file(get_pog_json("jetid", year))
+
+    if jet_type == "AK8":
+        name_tight = "AK8PUPPI_Tight"
+        name_tightlv = "AK8PUPPI_TightLeptonVeto"
+    elif jet_type == "AK4":
+        name_tight = "AK4PUPPI_Tight"
+        name_tightlv = "AK4PUPPI_TightLeptonVeto"
+
+    flat_j = ak.flatten(jets)
+
+    def get_jetid(j, nj, ev_str):
+ 
+        eta    = ak_clip(j.eta, -4.7, 4.7)
+        chHEF  = ak_clip(j.chHEF, 0., 1.)
+        neHEF  = ak_clip(j.neHEF, 0., 1.)
+        chEmEF = ak_clip(j.chEmEF, 0., 1.)
+        neEmEF = ak_clip(j.neEmEF, 0., 1.)
+        muEF   = ak_clip(j.muEF, 0., 1.)
+        chMult = ak_clip(j.chMultiplicity, 0., 100.)
+        neMult = ak_clip(j.neMultiplicity, 0., 100.)
+        nConst = chMult + neMult
+
+        jetid = evaluator[ev_str].evaluate(eta, chHEF, neHEF, chEmEF, neEmEF, muEF, chMult, neMult, nConst)
+        return ak.unflatten(jetid, nj)
+
+    jets["jetidtight"] = ak.values_astype(get_jetid(flat_j, ak.num(jets), name_tight), bool)
+    jets["jetidtightlepveto"] = ak.values_astype(get_jetid(flat_j, ak.num(jets), name_tightlv), bool)
+
+    return jets

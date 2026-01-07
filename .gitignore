@@ -11,6 +11,7 @@ shell
 .sites_map.json
 outfiles/
 condor/
+~./nobackup/pre-commit/
 *.jdl
 docker_stderror
 *.pkl
