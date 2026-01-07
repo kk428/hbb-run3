@@ -16,6 +16,10 @@ BR_HCC = 2.860e-02
 
 xsecs = {}
 
+# Signal: Obtained from David
+xsecs["VBSWLWLToJets_Minus"] = 0.008294
+
+
 # GJets: Obtained from XSDB
 xsecs["GJ_PTG-20to100"] = 195300
 xsecs["GJ_PTG-100to200"] = 1396

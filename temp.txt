@@ -1,19 +1,18 @@
 nohup: ignoring input
-5c024549fe27c36ce4abfed4168014f5e1e0fc90	refs/heads/vbs
- M src/run.py
+d3ed060dd710272fbda3b0356aace893ba8461ed	refs/heads/vbs
  M temp.txt
 Submitting job(s).
-1 job(s) submitted to cluster 82720571.
+1 job(s) submitted to cluster 1894020.
 Querying the CMS LPC pool and trying to find an available schedd...
 
-Attempting to submit jobs to lpcschedd6.fnal.gov
+Attempting to submit jobs to lpcschedd4.fnal.gov
 
 Submitting for year 2022
-Namespace(year='2022', samples=['VBSWLWLToJets_Minus'], subsamples=[], tag='010726-3', nano_version='v12', script='src/run.py', outdir='outfiles', site='lpc', save_sites=['lpc'], files_per_job=1, submit=True, git_branch='vbs', allow_diff_local_repo=True, yaml='src/submit_configs/hbb.yaml')
+Namespace(year='2022', samples=['VBSWLWLToJets_Minus'], subsamples=[], tag='010726-4', nano_version='v12', script='src/run.py', outdir='outfiles', site='lpc', save_sites=['lpc'], files_per_job=1, submit=True, git_branch='vbs', allow_diff_local_repo=True, yaml='src/submit_configs/hbb.yaml')
 Using branch vbs
 There are local changes that have not been committed!
 Proceeding anyway...
-Condor work dir:  condor/010726-3_v12
+Condor work dir:  condor/010726-4_v12
 []
 This is sample: VBSWLWLToJets_Minus
 {'VBSWLWLToJets_Minus': ['/eos/uscms/store/user/jennetd/vv/from_David/VBS_SSWW_Polarized/VBSWLWLToJets_Minus/NanoAODv15_VBSWLWLToJets_Minus_Run3Summer24wmLHEGS_Nanov15_9.root']}

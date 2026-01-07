@@ -69,7 +69,7 @@ def run(year: str, fileset: dict, args: argparse.Namespace):
         step_size=20_000,
         save_form=False,
         uproot_options={
-            #"xrootd_handler": uproot.source.xrootd.MultithreadedXRootDSource,
+            "xrootd_handler": uproot.source.xrootd.MultithreadedXRootDSource,
             "allow_read_errors_with_report": True,
         },
         step_size_safety_factor=0.5,

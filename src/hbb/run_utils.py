@@ -124,7 +124,7 @@ def get_fileset(
     fileset = {}
 
     for sample in samples:
-        print("This is sample: " + sample)
+        # print("This is sample: " + sample)
         sample_set = full_fileset_nano[year][sample]
         print(sample_set)
         set_subsamples = list(sample_set.keys())
