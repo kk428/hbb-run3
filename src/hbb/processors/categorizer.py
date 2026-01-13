@@ -8,12 +8,10 @@ from pathlib import Path
 import awkward as ak
 import dask_awkward as dak
 import numpy as np
-import pandas as pd
+import xgboost as xgb
 from coffea.analysis_tools import PackedSelection, Weights
 from coffea.ml_tools import xgboost_wrapper
-from dask_awkward import to_dataframe
 from hist.dask import Hist
-import xgboost as xgb
 
 from hbb.corrections import (
     add_btag_weights,
@@ -142,7 +140,7 @@ def get_BDT_model(BDT_file: str):
             ret = ak.concatenate(features, axis=1)
             # ret = ak.concatenate([events[name][:, np.newaxis] for name in bdt_features], axis=1)
             return [], dict(data=ret)
-    
+
     booster = xgb.Booster()
     booster.load_model(Path.cwd() / BDT_file)
     booster.feature_names = None  # Disable feature name checking
