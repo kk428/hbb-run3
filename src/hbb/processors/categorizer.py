@@ -13,6 +13,7 @@ from coffea.analysis_tools import PackedSelection, Weights
 from coffea.ml_tools import xgboost_wrapper
 from dask_awkward import to_dataframe
 from hist.dask import Hist
+import xgboost as xgb
 
 from hbb.corrections import (
     add_btag_weights,
@@ -133,10 +134,19 @@ def get_BDT_model(BDT_file: str):
     class xgboost_model(xgboost_wrapper):
         # Define how to prepare awkward arrays for BDT evaluation
         def prepare_awkward(self, events):
-            ret = ak.concatenate([events[name][:, np.newaxis] for name in bdt_features], axis=1)
+            features = []
+            for name in bdt_features:
+                feat = events[name]
+                feat = ak.fill_none(feat, -999.0)
+                features.append(feat[:, np.newaxis])
+            ret = ak.concatenate(features, axis=1)
+            # ret = ak.concatenate([events[name][:, np.newaxis] for name in bdt_features], axis=1)
             return [], dict(data=ret)
-
-    model = xgboost_model(Path.cwd() / BDT_file)
+    
+    booster = xgb.Booster()
+    booster.load_model(Path.cwd() / BDT_file)
+    booster.feature_names = None  # Disable feature name checking
+    model = xgboost_model(booster)
     return model
 
 
@@ -555,7 +565,7 @@ class categorizer(SkimmerABC):
                 "JetClosestFatJet0_phi": ak4_closest_ak8.phi,
                 "JetClosestFatJet0_mass": ak4_closest_ak8.mass,
             }
-            bdt_input = ak.zip(bdt_ak_array)
+            bdt_input = ak.zip(bdt_ak_array, depth_limit=1)
             # bdt_ak_array = {key: to_dataframe(value) for key, value in bdt_ak_array.items()}
             # bdt_input = pd.DataFrame()
             # for _key, value in bdt_ak_array.items():
@@ -566,8 +576,8 @@ class categorizer(SkimmerABC):
             bdt_model = self.bdt_model
             # bdt_scores = bdt_model(bdt_input)
             bdt_scores = bdt_model(bdt_input)
-            print(bdt_scores)
-            bdt_scores = ak.from_numpy(bdt_scores)
+            print(bdt_scores, dir(bdt_scores), type(bdt_scores))
+            # bdt_scores = ak.from_numpy(bdt_scores)
 
             # assign scores to selections
             selection.add("BDTisVBF", (bdt_scores == 0))
