@@ -24,14 +24,6 @@ done
         sleep 60
     done
 )
-
-xrdcp  -f "${t2_prefixes}/store/user/lpchbbrun3/bweiss/run.py" hbb-run3/src/
-# xrdcp  -f "${t2_prefixes}/store/user/lpchbbrun3/lzygala/objects.py" hbb-run3/src/hbb/processors/
-xrdcp  -f "${t2_prefixes}/store/user/lpchbbrun3/bweiss/categorizer.py" hbb-run3/src/hbb/processors/
-xrdcp  -f "${t2_prefixes}/store/user/lpchbbrun3/bweiss/MultiClassBDT_23Oct25.ubj" hbb-run3/src/hbb/data/
-# xrdcp  -f "${t2_prefixes}/store/user/lpchbbrun3/lzygala/corrections.py" hbb-run3/src/hbb/
-# xrdcp  -f "${t2_prefixes}/store/user/lpchbbrun3/lzygala/nanoindex_v14_private.json" hbb-run3/data/
-# xrdcp  -f "${t2_prefixes}/store/user/lpchbbrun3/lzygala/v14_private.py" hbb-run3/data/
 cd hbb-run3 || exit
 
 commithash=$$(git rev-parse HEAD)
@@ -42,6 +34,7 @@ pip install xgboost
 
 # run code 
 python -u -W ignore $script --year $year --starti $starti --endi $endi --samples $sample --subsamples $subsample --nano-version ${nano_version} --BDT $BDT --${run_mode} 
+
 # Move final output to EOS
 # This new logic recursively copies the region directories created by the processor
 
