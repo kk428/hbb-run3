@@ -231,6 +231,12 @@ if __name__ == "__main__":
     parser.add_argument(
         "--yaml", default=None, help="yaml file with samples and subsamples", type=str
     )
+    parser.add_argument(
+        "--BDT",
+        type=bool,
+        help="Evaluate BDT scores and use for categorization",
+        default=False,
+    )
     group = parser.add_mutually_exclusive_group()
     group.add_argument(
         "--save-skim",
@@ -248,13 +254,6 @@ if __name__ == "__main__":
         "--save-skim-nosysts",
         action="store_true",
         help="save skimmed files, skip systematics",
-        default=False,
-    )
-
-    parser.add_argument(
-        "--BDT",
-        action="store_true",
-        help="Evaluate BDT scores and use for categorization",
         default=False,
     )
 

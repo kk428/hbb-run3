@@ -574,7 +574,7 @@ class categorizer(SkimmerABC):
             bdt_model = self.bdt_model
             # bdt_scores = bdt_model(bdt_input)
             bdt_scores = bdt_model(bdt_input)
-            print(bdt_scores, dir(bdt_scores), type(bdt_scores))
+            # print(bdt_scores, dir(bdt_scores), type(bdt_scores))
             # bdt_scores = ak.from_numpy(bdt_scores)
 
             # assign scores to selections
