@@ -33,8 +33,12 @@ pip install -e .
 pip install xgboost
 
 # run code 
-python -u -W ignore $script --year $year --starti $starti --endi $endi --samples $sample --subsamples $subsample --nano-version ${nano_version} --BDT $BDT --${run_mode} 
-
+if [[ $BDT == True ]]; then
+    python -u -W ignore $script --BDT --year $year --starti $starti --endi $endi --samples $sample --subsamples $subsample --nano-version ${nano_version} --${run_mode}
+    echo "BDT option enabled!"
+else
+    python -u -W ignore $script --year $year --starti $starti --endi $endi --samples $sample --subsamples $subsample --nano-version ${nano_version} --${run_mode}
+fi
 # Move final output to EOS
 # This new logic recursively copies the region directories created by the processor
 

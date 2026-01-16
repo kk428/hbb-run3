@@ -233,7 +233,7 @@ if __name__ == "__main__":
     )
     parser.add_argument(
         "--BDT",
-        type=bool,
+        action="store_true",
         help="Evaluate BDT scores and use for categorization",
         default=False,
     )
