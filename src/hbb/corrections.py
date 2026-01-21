@@ -103,9 +103,10 @@ def add_pileup_weight(weights: Weights, year: str, nPU):
     # https://twiki.cern.ch/twiki/bin/view/CMS/LumiRecommendationsRun3
     values = {}
 
-    cset = correctionlib.CorrectionSet.from_file(get_pog_json("pileup", year))
-    if year == "2024":
-        pog_json_file = Path(f"{package_path}/hbb/data/puWeights_2024.json")
+    if not year == "2024":
+        cset = correctionlib.CorrectionSet.from_file(get_pog_json("pileup", year))
+    else:
+        pog_json_file = f"{package_path}/hbb/data/puWeights_2024.json"
         cset = correctionlib.CorrectionSet.from_file(pog_json_file)
 
     corr = {
