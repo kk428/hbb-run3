@@ -103,6 +103,7 @@ To run on a single file (starting index at 0, ending index at 1) for one subsamp
 python src/run.py --sample Hbb --subsample GluGluHto2B_PT-200_M-125 --starti 0 --endi 1
 ```
 To save skim, add `--save-skim`
+To save skim with no systematics, add `-save-skim-nosysts`
 To save the AK4 btag efficiencies, add `--btag-eff`
 
 To run on multiple subsamples:

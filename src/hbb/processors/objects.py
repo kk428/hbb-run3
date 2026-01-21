@@ -9,6 +9,7 @@ from coffea.nanoevents.methods.nanoaod import (
     MuonArray,
     PhotonArray,
 )
+
 from hbb.corrections import correct_jetid
 
 
@@ -107,11 +108,12 @@ def set_ak4jets(jets: JetArray, year: str, nano_version: str, event_rho):
 
     # TODO: Add PNet pt regression
 
-    #jerc variables
+    # jerc variables
     jets["pt_raw"] = (1 - jets.rawFactor) * jets.pt
     jets["mass_raw"] = (1 - jets.rawFactor) * jets.mass
-    jets["pt_gen"] = ak.values_astype(ak.fill_none(jets.matched_gen.pt, 0), np.float32)
     jets["event_rho"] = ak.broadcast_arrays(event_rho, jets.pt)[0]
+    if "matched_gen" in jets.fields:
+        jets["pt_gen"] = ak.values_astype(ak.fill_none(jets.matched_gen.pt, 0), np.float32)
 
     return jets
 
@@ -146,25 +148,37 @@ def set_ak8jets(fatjets: FatJetArray, year: str, nano_version: str, event_rho):
         fatjets["ParTPXcs"] = fatjets.globalParT3_Xcs
         fatjets["ParTPXqq"] = fatjets.globalParT3_Xqq
 
-        fatjets["ParTPXbbVsQCD"] = fatjets.globalParT3_Xbb / (fatjets.globalParT3_Xbb + fatjets.globalParT3_QCD)
-        fatjets["ParTPXccVsQCD"] = fatjets.globalParT3_Xcc / (fatjets.globalParT3_Xcc + fatjets.globalParT3_QCD)
-        fatjets["ParTPXbbXcc"] = (fatjets.globalParT3_Xbb + fatjets.globalParT3_Xcc) / (fatjets.globalParT3_Xbb + fatjets.globalParT3_Xcc + fatjets.globalParT3_QCD)
+        fatjets["ParTPXbbVsQCD"] = fatjets.globalParT3_Xbb / (
+            fatjets.globalParT3_Xbb + fatjets.globalParT3_QCD
+        )
+        fatjets["ParTPXccVsQCD"] = fatjets.globalParT3_Xcc / (
+            fatjets.globalParT3_Xcc + fatjets.globalParT3_QCD
+        )
+        fatjets["ParTPXbbXcc"] = (fatjets.globalParT3_Xbb + fatjets.globalParT3_Xcc) / (
+            fatjets.globalParT3_Xbb + fatjets.globalParT3_Xcc + fatjets.globalParT3_QCD
+        )
 
         # ParT masses were trained with the masses WITHOUT the jet mass correction, so we have to undo the correction here
-        fatjets["ParTmassGeneric"] = fatjets.globalParT3_massCorrGeneric * (1 - fatjets.rawFactor) * fatjets.mass
-        fatjets["ParTmassX2p"] = fatjets.globalParT3_massCorrX2p * (1 - fatjets.rawFactor) * fatjets.mass
+        fatjets["ParTmassGeneric"] = (
+            fatjets.globalParT3_massCorrGeneric * (1 - fatjets.rawFactor) * fatjets.mass
+        )
+        fatjets["ParTmassX2p"] = (
+            fatjets.globalParT3_massCorrX2p * (1 - fatjets.rawFactor) * fatjets.mass
+        )
 
     fatjets["msd"] = fatjets.msoftdrop
     fatjets["qcdrho"] = 2 * np.log(fatjets.msd / fatjets.pt)
     fatjets["pnetmass"] = fatjets.particleNet_massCorr * fatjets.mass
-    fatjets["pnetXbbXcc"] = (fatjets.particleNet_XbbVsQCD + fatjets.particleNet_XccVsQCD) / (fatjets.particleNet_XbbVsQCD + fatjets.particleNet_XccVsQCD + fatjets.particleNet_QCD)
+    fatjets["pnetXbbXcc"] = (fatjets.particleNet_XbbVsQCD + fatjets.particleNet_XccVsQCD) / (
+        fatjets.particleNet_XbbVsQCD + fatjets.particleNet_XccVsQCD + fatjets.particleNet_QCD
+    )
 
-    #jerc variables
+    # jerc variables
     fatjets["pt_raw"] = (1 - fatjets.rawFactor) * fatjets.pt
     fatjets["mass_raw"] = (1 - fatjets.rawFactor) * fatjets.mass
-    fatjets["pt_gen"] = ak.values_astype(ak.fill_none(fatjets.matched_gen.pt, 0), np.float32)
     fatjets["event_rho"] = ak.broadcast_arrays(event_rho, fatjets.pt)[0]
-
+    if "matched_gen" in fatjets.fields:
+        fatjets["pt_gen"] = ak.values_astype(ak.fill_none(fatjets.matched_gen.pt, 0), np.float32)
     return fatjets
 
 
