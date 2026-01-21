@@ -8,7 +8,9 @@ from pathlib import Path
 import awkward as ak
 import dask_awkward as dak
 import numpy as np
+import xgboost as xgb
 from coffea.analysis_tools import PackedSelection, Weights
+from coffea.ml_tools import xgboost_wrapper
 from hist.dask import Hist
 
 from hbb.corrections import (
@@ -69,6 +71,82 @@ gen_selection_dict = {
 }
 
 
+def get_BDT_model(BDT_file: str):
+    bdt_features = [
+        "nFatJet",
+        "nJet",
+        "FatJet0_phi",
+        "FatJet0_eta",
+        "FatJet0_n2b1",
+        "FatJet0_n3b1",
+        "FatJet1_pt",
+        "FatJet1_phi",
+        "FatJet1_eta",
+        "FatJet1_msd",
+        "FatJet1_pnetMass",
+        "FatJet1_pnetTXbb",
+        "FatJet1_pnetTXcc",
+        "FatJet1_pnetTXqq",
+        "FatJet1_pnetTXgg",
+        "VBFPair_mjj",
+        "VBFPair_deta",
+        "Photon0_pt",
+        "Jet0_pt",
+        "Jet0_eta",
+        "Jet0_phi",
+        "Jet0_mass",
+        "Jet0_btagPNetB",
+        "Jet0_btagPNetCvB",
+        "Jet0_btagPNetCvL",
+        "Jet0_btagPNetQvG",
+        "Jet1_pt",
+        "Jet1_eta",
+        "Jet1_phi",
+        "Jet1_mass",
+        "Jet1_btagPNetB",
+        "Jet1_btagPNetCvB",
+        "Jet1_btagPNetCvL",
+        "Jet1_btagPNetQvG",
+        "Jet2_pt",
+        "Jet2_eta",
+        "Jet2_phi",
+        "Jet2_mass",
+        "Jet2_btagPNetB",
+        "Jet2_btagPNetCvB",
+        "Jet2_btagPNetCvL",
+        "Jet2_btagPNetQvG",
+        "Jet3_pt",
+        "Jet3_eta",
+        "Jet3_phi",
+        "Jet3_mass",
+        "Jet3_btagPNetB",
+        "Jet4_btagPNetCvB",
+        "Jet4_btagPNetCvL",
+        "Jet4_btagPNetQvG",
+        "JetClosestFatJet0_pt",
+        "JetClosestFatJet0_eta",
+        "JetClosestFatJet0_phi",
+        "JetClosestFatJet0_mass",
+    ]
+
+    class xgboost_model(xgboost_wrapper):
+        # Define how to prepare awkward arrays for BDT evaluation
+        def prepare_awkward(self, events):
+            features = []
+            for name in bdt_features:
+                feat = events[name]
+                feat = ak.fill_none(feat, -999.0)
+                features.append(feat[:, np.newaxis])
+            ret = ak.concatenate(features, axis=1)
+            return [], dict(data=ret)
+
+    booster = xgb.Booster()
+    booster.load_model(Path.cwd() / BDT_file)
+    booster.feature_names = None  # Disable feature name checking
+    model = xgboost_model(booster)
+    return model
+
+
 class categorizer(SkimmerABC):
     def __init__(
         self,
@@ -78,6 +156,7 @@ class categorizer(SkimmerABC):
         systematics=False,
         save_skim=False,
         skim_outpath="",
+        evaluate_BDT=True,
         btag_eff=False,
         save_skim_nosysts=False,
     ):
@@ -93,10 +172,13 @@ class categorizer(SkimmerABC):
         if self._skip_syst:
             self._save_skim = True
         self._skim_outpath = skim_outpath
+        self._evaluate_BDT = evaluate_BDT
         self._btag_eff = btag_eff
         self._btagger, self._btag_wp = "btagPNetB", "M"
         self._btag_cut = b_taggers[self._year]["AK4"][self._btagger][self._btag_wp]
         self._mupt_type = "ptcorr"
+        if self._evaluate_BDT:
+            self.bdt_model = get_BDT_model("src/hbb/data/MultiClassBDT_23Oct25.ubj")
 
         with Path("src/hbb/muon_triggers.json").open() as f:
             self._muontriggers = json.load(f)
@@ -422,6 +504,75 @@ class categorizer(SkimmerABC):
         selection.add("atleastonephoton", (ntightphotons >= 1))
         selection.add("passphotonveto", (nphotons == 0))
 
+        if self._evaluate_BDT:
+            # Construct BDT input
+            bdt_ak_array = {
+                "nFatJet": ak.num(goodfatjets, axis=1),
+                "nJet": ak.num(goodjets, axis=1),
+                "FatJet0_phi": candidatejet.phi,
+                "FatJet0_eta": candidatejet.eta,
+                "FatJet0_n2b1": candidatejet.n2b1,
+                "FatJet0_n3b1": candidatejet.n3b1,
+                "FatJet1_pt": subleadingjet.pt,
+                "FatJet1_phi": subleadingjet.phi,
+                "FatJet1_eta": subleadingjet.eta,
+                "FatJet1_msd": subleadingjet.msd,
+                "FatJet1_pnetMass": subleadingjet.pnetmass,
+                "FatJet1_pnetTXbb": subleadingjet.particleNet_XbbVsQCD,
+                "FatJet1_pnetTXcc": subleadingjet.particleNet_XccVsQCD,
+                "FatJet1_pnetTXqq": subleadingjet.particleNet_XqqVsQCD,
+                "FatJet1_pnetTXgg": subleadingjet.particleNet_XggVsQCD,
+                "VBFPair_mjj": vbf_mjj,
+                "VBFPair_deta": vbf_deta,
+                "Photon0_pt": vgammaphoton.pt,
+                "Jet0_pt": jet1_away.pt,
+                "Jet0_eta": jet1_away.eta,
+                "Jet0_phi": jet1_away.phi,
+                "Jet0_mass": jet1_away.mass,
+                "Jet0_btagPNetB": jet1_away.btagPNetB,
+                "Jet0_btagPNetCvB": jet1_away.btagPNetCvB,
+                "Jet0_btagPNetCvL": jet1_away.btagPNetCvL,
+                "Jet0_btagPNetQvG": jet1_away.btagPNetQvG,
+                "Jet1_pt": jet2_away.pt,
+                "Jet1_eta": jet2_away.eta,
+                "Jet1_phi": jet2_away.phi,
+                "Jet1_mass": jet2_away.mass,
+                "Jet1_btagPNetB": jet2_away.btagPNetB,
+                "Jet1_btagPNetCvB": jet2_away.btagPNetCvB,
+                "Jet1_btagPNetCvL": jet2_away.btagPNetCvL,
+                "Jet1_btagPNetQvG": jet2_away.btagPNetQvG,
+                "Jet2_pt": jet3_away.pt,
+                "Jet2_eta": jet3_away.eta,
+                "Jet2_phi": jet3_away.phi,
+                "Jet2_mass": jet3_away.mass,
+                "Jet2_btagPNetB": jet3_away.btagPNetB,
+                "Jet2_btagPNetCvB": jet3_away.btagPNetCvB,
+                "Jet2_btagPNetCvL": jet3_away.btagPNetCvL,
+                "Jet2_btagPNetQvG": jet3_away.btagPNetQvG,
+                "Jet3_pt": jet4_away.pt,
+                "Jet3_eta": jet4_away.eta,
+                "Jet3_phi": jet4_away.phi,
+                "Jet3_mass": jet4_away.mass,
+                "Jet3_btagPNetB": jet4_away.btagPNetB,
+                "Jet4_btagPNetCvB": jet4_away.btagPNetCvB,
+                "Jet4_btagPNetCvL": jet4_away.btagPNetCvL,
+                "Jet4_btagPNetQvG": jet4_away.btagPNetQvG,
+                "JetClosestFatJet0_pt": ak4_closest_ak8.pt,
+                "JetClosestFatJet0_eta": ak4_closest_ak8.eta,
+                "JetClosestFatJet0_phi": ak4_closest_ak8.phi,
+                "JetClosestFatJet0_mass": ak4_closest_ak8.mass,
+            }
+            bdt_input = ak.zip(bdt_ak_array, depth_limit=1)
+
+            # Evaluate BDT
+            bdt_model = self.bdt_model
+            bdt_scores = bdt_model(bdt_input)
+
+            # assign scores to selections
+            selection.add("BDTisVBF", (bdt_scores == 0))
+            selection.add("BDTisVH", (bdt_scores == 1))
+            selection.add("BDTisggF", (bdt_scores == 2))
+
         gen_variables = {}
         btag_SF = ak.ones_like(events.run)
         if isRealData:
@@ -524,6 +675,49 @@ class categorizer(SkimmerABC):
                 "antiak4btagMedium",
             ],
         }
+        if self._evaluate_BDT:
+            regions.update(
+                {
+                    "signal-ggf-BDT": [
+                        "trigger",
+                        "lumimask",
+                        "metfilter",
+                        "ak4jetveto",
+                        "minjetkin",
+                        "antiak4btagMediumOppHem",
+                        "lowmet",
+                        "noleptons",
+                        # "notvbf",
+                        # "not2FJ",
+                        "BDTisggF",
+                    ],
+                    "signal-vh-BDT": [
+                        "trigger",
+                        "lumimask",
+                        "metfilter",
+                        "ak4jetveto",
+                        "minjetkin",
+                        "antiak4btagMediumOppHem",
+                        "lowmet",
+                        "noleptons",
+                        # "notvbf",
+                        # "2FJ",
+                        "BDTisVH",
+                    ],
+                    "signal-vbf-BDT": [
+                        "trigger",
+                        "lumimask",
+                        "metfilter",
+                        "ak4jetveto",
+                        "minjetkin",
+                        "antiak4btagMediumOppHem",
+                        "lowmet",
+                        "noleptons",
+                        # "isvbf",
+                        "BDTisVBF",
+                    ],
+                }
+            )
 
         btag_eff_cuts = [
             "trigger",
@@ -602,6 +796,8 @@ class categorizer(SkimmerABC):
                 **gen_variables,
                 **egamma_trigger_booleans,
             }
+            if self._evaluate_BDT:
+                output_array.update({"BDT_score": bdt_scores})
 
             # reduced output array for energy variation shift
             energy_var_array = {
@@ -713,6 +909,7 @@ class categorizer(SkimmerABC):
                 skim_path.mkdir(parents=True, exist_ok=True)
             print("Saving skim to: ", skim_path)
 
+            # possible TODO: add systematic weights?
             output["skim"][region] = dak.to_parquet(
                 output_array[cut],
                 str(skim_path),
@@ -816,6 +1013,7 @@ class categorizer(SkimmerABC):
 
         toc = time.time()
         output["filltime"] = toc - tic
+        print(f"Time to fill histograms: {toc - tic:.2f} seconds")
         if shift_name is None:
             output["weightStats"] = weights.weightStatistics
         return output

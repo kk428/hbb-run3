@@ -108,7 +108,8 @@ def main(args):
                     "outdir": sample_dir,
                     "jobnum": j,
                     "nano_version": args.nano_version,
-                    "run_mode": args.run_mode
+                    "run_mode": args.run_mode,
+                    "BDT": args.BDT
                 }
                 write_template(sh_templ, localsh, sh_args)
                 os.system(f"chmod u+x {localsh}")
@@ -123,6 +124,7 @@ def main(args):
                 nsubmit = nsubmit + 1
 
     print(f"Total {nsubmit} jobs")
+    print(f"Evaluate BDT: {args.BDT}")
 
 
 def parse_args(parser):
@@ -163,6 +165,12 @@ def parse_args(parser):
         help="skimmer run mode",
         type=str,
         choices=["save-skim", "btag-eff", "save-skim-nosysts"],
+    )
+    parser.add_argument(
+        "--BDT",
+        action="store_true",
+        help="Evaluate BDT scores and use for categorization",
+        default=False,
     )
 
 
