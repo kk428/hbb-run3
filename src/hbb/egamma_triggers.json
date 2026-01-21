@@ -18,5 +18,10 @@
         "Photon200",
         "Photon110EB_TightID_TightIso",
         "Photon30EB_TightID_TightIso"
+        ],
+    "2024": [
+        "Photon200",
+        "Photon110EB_TightID_TightIso",
+        "Photon30EB_TightID_TightIso"
         ]
 }
