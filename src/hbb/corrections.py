@@ -45,6 +45,7 @@ pog_jsons = {
     "muon": ["MUO", "muon_Z.json.gz"],
     "electron": ["EGM", "electron.json.gz"],
     "photon": ["EGM", "photon.json.gz"],
+    "photon2024": ["EGM", "photonID_v1.json.gz"],
     "pileup": ["LUM", "puWeights.json.gz"],
     "fatjet_jec": ["JME", "fatJet_jerc.json.gz"],
     "jet_jec": ["JME", "jet_jerc.json.gz"],
@@ -361,12 +362,17 @@ def add_btag_weights(weights: Weights, jets: JetArray, btagger: str, wp: str, ye
     Using BTV fixed WP recommendations
     https://btv-wiki.docs.cern.ch/PerformanceCalibration/fixedWPSFRecommendations/
     """
+    sys_name = ""
     if "PNet" in btagger:
         sys_name = "particleNet"
     elif "RobustParT" in btagger:
         sys_name = "robustParticleTransformer"
     elif "DeepFlav" in btagger:
         sys_name = "deepJet"
+
+    if year == "2024":
+        #SFs not derived by BTV for Summer24 yet
+        return ak.ones_like(ak.num(jets))
 
     cset = correctionlib.CorrectionSet.from_file(get_pog_json("btagging", year))
     btag_cut = b_taggers[year]["AK4"][btagger][wp]
@@ -489,7 +495,11 @@ def add_photon_weights(weights: Weights, year: str, photons):
         "2024" : "2024",
     }
 
-    cset = correctionlib.CorrectionSet.from_file(get_pog_json("photon", year))
+    if not year == "2024":
+        cset = correctionlib.CorrectionSet.from_file(get_pog_json("photon", year))
+    else:
+        cset = correctionlib.CorrectionSet.from_file(get_pog_json("photon2024", year))
+
 
     id_nom = cset[id_key].evaluate(year_map[year], "sf", "Tight", photons.eta, photons.pt)
     id_up = cset[id_key].evaluate(year_map[year], "sfup", "Tight", photons.eta, photons.pt)
