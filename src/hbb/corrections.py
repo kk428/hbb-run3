@@ -356,7 +356,7 @@ def correct_met(met, jets: JetArray):
 
     return corrected_met
 
-def add_btag_weights(weights: Weights, jets: JetArray, btagger: str, wp: str, year: str, dataset: str):
+def add_btag_weights(weights: Weights, jets: JetArray, btagger: str, wp: str, year: str):
     """
     Apply btag event scale factor for AK4 jets queried
     Using BTV fixed WP recommendations
@@ -381,7 +381,11 @@ def add_btag_weights(weights: Weights, jets: JetArray, btagger: str, wp: str, ye
     with open(eff_file, 'rb') as f:
         lookup_dict = pickle.load(f)
 
-    def eff_lookup(x, y, z): return lookup_dict[dataset](x, y, z)
+    eff_opt = "TTbar+QCD"  
+        #options = "TTbar+QCD", "TTbar", "QCD"
+        #defined in src/hbb/data/btag/compile_btag_eff.py
+
+    def eff_lookup(x, y, z): return lookup_dict[eff_opt](x, y, z)
 
     jets_l = jets[(jets.hadronFlavour == 0) & (abs(jets.eta)<2.5)]
     jets_b = jets[(jets.hadronFlavour == 4) & (abs(jets.eta)<2.5)]
