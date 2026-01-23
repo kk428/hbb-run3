@@ -352,10 +352,10 @@ class categorizer(SkimmerABC):
         jec_key = f"{self._year}_{mc_run}"
 
         fatjets = set_ak8jets(
-            events.FatJet, self._year, self._nano_version, events.Rho.fixedGridRhoFastjetAll
+            events.FatJet, isRealData, self._year, self._nano_version, events.Rho.fixedGridRhoFastjetAll
         )
         jets = set_ak4jets(
-            events.Jet, self._year, self._nano_version, events.Rho.fixedGridRhoFastjetAll
+            events.Jet, isRealData, self._year, self._nano_version, events.Rho.fixedGridRhoFastjetAll
         )
 
         if self._nano_version == "v14_private":
