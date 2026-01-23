@@ -500,10 +500,16 @@ def add_photon_weights(weights: Weights, year: str, photons):
     else:
         cset = correctionlib.CorrectionSet.from_file(get_pog_json("photon2024", year))
 
-
-    id_nom = cset[id_key].evaluate(year_map[year], "sf", "Tight", photons.eta, photons.pt)
-    id_up = cset[id_key].evaluate(year_map[year], "sfup", "Tight", photons.eta, photons.pt)
-    id_down = cset[id_key].evaluate(year_map[year], "sfdown", "Tight", photons.eta, photons.pt)
+    if "2023" in year:   
+        #json format is different for 23 and 23BPix
+        #https://twiki.cern.ch/twiki/bin/view/CMS/EgammSFandSSRun3#Photon_JSON_format_AN1
+        id_nom = cset[id_key].evaluate(year_map[year], "sf", "Tight", photons.eta, photons.pt, photons.phi)
+        id_up = cset[id_key].evaluate(year_map[year], "sfup", "Tight", photons.eta, photons.pt, photons.phi)
+        id_down = cset[id_key].evaluate(year_map[year], "sfdown", "Tight", photons.eta, photons.pt, photons.phi)
+    else:
+        id_nom = cset[id_key].evaluate(year_map[year], "sf", "Tight", photons.eta, photons.pt)
+        id_up = cset[id_key].evaluate(year_map[year], "sfup", "Tight", photons.eta, photons.pt)
+        id_down = cset[id_key].evaluate(year_map[year], "sfdown", "Tight", photons.eta, photons.pt)
 
     weights.add("photon_ID", id_nom, id_up, id_down)
 
