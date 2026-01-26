@@ -252,7 +252,7 @@ class categorizer(SkimmerABC):
             add_ps_weight(weights, events.PSWeight)
             if not self._btag_eff:
                 btag_SF = add_btag_weights(
-                    weights, btag_jets, self._btagger, self._btag_wp, self._year, dataset
+                    weights, btag_jets, self._btagger, self._btag_wp, self._year
                 )
 
             # Easier to save nominal weights for rest of MC with all of the syst names for grabbing columns in post-processing
