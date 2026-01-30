@@ -256,14 +256,15 @@ class categorizer(SkimmerABC):
                 )
 
             # Easier to save nominal weights for rest of MC with all of the syst names for grabbing columns in post-processing
-            flag_syst = ("Hto2B" in dataset) or ("Hto2C" in dataset) or ("VBFZto" in dataset)
-            add_pdf_weight(weights, getattr(events, "LHEPdfWeight", None) if flag_syst else None)
-            add_scalevar_7pt(
-                weights, getattr(events, "LHEScaleWeight", None) if flag_syst else None
-            )
-            add_scalevar_3pt(
-                weights, getattr(events, "LHEScaleWeight", None) if flag_syst else None
-            )
+            # Need to fix
+            # flag_syst = ("Hto2B" in dataset) or ("Hto2C" in dataset) or ("VBFZto" in dataset)
+            # add_pdf_weight(weights, getattr(events, "LHEPdfWeight", None) if flag_syst else None)
+            # add_scalevar_7pt(
+            #     weights, getattr(events, "LHEScaleWeight", None) if flag_syst else None
+            # )
+            # add_scalevar_3pt(
+            #     weights, getattr(events, "LHEScaleWeight", None) if flag_syst else None
+            # )
 
             if muons is not None:
                 add_muon_weights(weights, self._year, muons, self._mupt_type)
