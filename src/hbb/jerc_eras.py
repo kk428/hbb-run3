@@ -5,6 +5,7 @@ run_map = {
     ("Run2022G",): "Run2022G",
     ("Run2023Cv1", "Run2023Cv2", "Run2023Cv3"): "Run2023Cv123",
     ("Run2023Cv4",): "Run2023Cv4",
+    ("Run2023D",): "Run2023D",
     ("Run2024C",): "Run2024C",
     ("Run2024D",): "Run2024D",
     ("Run2024E",): "Run2024E",
