@@ -220,7 +220,7 @@ class categorizer(SkimmerABC):
     def process(self, events):
 
         # process only nominal case
-        if self._skip_syst or not self._save_skim:
+        if self._skip_syst or not self._save_skim or not hasattr(events, "genWeight"):
             return {"nominal": self.process_shift(events, "nominal")}
 
         """
