@@ -256,7 +256,7 @@ class categorizer(SkimmerABC):
                 )
 
             # Easier to save nominal weights for rest of MC with all of the syst names for grabbing columns in post-processing
-            # TODO
+            # Need to fix
             # flag_syst = ("Hto2B" in dataset) or ("Hto2C" in dataset) or ("VBFZto" in dataset)
             # add_pdf_weight(weights, getattr(events, "LHEPdfWeight", None) if flag_syst else None)
             # add_scalevar_7pt(
