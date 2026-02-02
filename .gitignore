@@ -14,6 +14,7 @@ outfiles/
 docker_stderror
 nobackup/
 *.pkl
+!mc_eff_*.pkl
 *~
 *.d
 *.pcm
@@ -24,3 +25,6 @@ fitting/templates/
 plots/
 *.txt
 *.ipynb_checkpoints/
+.vscode/
+condor/
+!src/condor/

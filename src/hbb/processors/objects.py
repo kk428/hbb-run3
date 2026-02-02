@@ -78,7 +78,7 @@ def good_electrons(electrons: ElectronArray):
     return electrons[sel]
 
 
-def set_ak4jets(jets: JetArray, year: str, nano_version: str, event_rho):
+def set_ak4jets(jets: JetArray, isRealData: bool, year: str, nano_version: str, event_rho):
     """
     Jet ID fix for NanoAOD v12 copying
     # https://gitlab.cern.ch/cms-jetmet/coordination/coordination/-/issues/117#note_8880716
@@ -112,7 +112,7 @@ def set_ak4jets(jets: JetArray, year: str, nano_version: str, event_rho):
     jets["pt_raw"] = (1 - jets.rawFactor) * jets.pt
     jets["mass_raw"] = (1 - jets.rawFactor) * jets.mass
     jets["event_rho"] = ak.broadcast_arrays(event_rho, jets.pt)[0]
-    if "matched_gen" in jets.fields:
+    if not isRealData:  # only for jer
         jets["pt_gen"] = ak.values_astype(ak.fill_none(jets.matched_gen.pt, 0), np.float32)
 
     return jets
@@ -135,7 +135,7 @@ def good_ak4jets(jets: JetArray):
     return jets[sel]
 
 
-def set_ak8jets(fatjets: FatJetArray, year: str, nano_version: str, event_rho):
+def set_ak8jets(fatjets: FatJetArray, isRealData: bool, year: str, nano_version: str, event_rho):
 
     if "v12" in nano_version:
         fatjets["jetidtight"] = fatjets.isTight
@@ -177,7 +177,7 @@ def set_ak8jets(fatjets: FatJetArray, year: str, nano_version: str, event_rho):
     fatjets["pt_raw"] = (1 - fatjets.rawFactor) * fatjets.pt
     fatjets["mass_raw"] = (1 - fatjets.rawFactor) * fatjets.mass
     fatjets["event_rho"] = ak.broadcast_arrays(event_rho, fatjets.pt)[0]
-    if "matched_gen" in fatjets.fields:
+    if not isRealData:  # only for jer
         fatjets["pt_gen"] = ak.values_astype(ak.fill_none(fatjets.matched_gen.pt, 0), np.float32)
     return fatjets
 

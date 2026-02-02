@@ -356,7 +356,7 @@ def correct_met(met, jets: JetArray):
 
     return corrected_met
 
-def add_btag_weights(weights: Weights, jets: JetArray, btagger: str, wp: str, year: str, dataset: str):
+def add_btag_weights(weights: Weights, jets: JetArray, btagger: str, wp: str, year: str):
     """
     Apply btag event scale factor for AK4 jets queried
     Using BTV fixed WP recommendations
@@ -381,7 +381,11 @@ def add_btag_weights(weights: Weights, jets: JetArray, btagger: str, wp: str, ye
     with open(eff_file, 'rb') as f:
         lookup_dict = pickle.load(f)
 
-    def eff_lookup(x, y, z): return lookup_dict[dataset](x, y, z)
+    eff_opt = "TTbar+QCD"  
+        #options = "TTbar+QCD", "TTbar", "QCD"
+        #defined in src/hbb/data/btag/compile_btag_eff.py
+
+    def eff_lookup(x, y, z): return lookup_dict[eff_opt](x, y, z)
 
     jets_l = jets[(jets.hadronFlavour == 0) & (abs(jets.eta)<2.5)]
     jets_b = jets[(jets.hadronFlavour == 4) & (abs(jets.eta)<2.5)]
@@ -500,10 +504,16 @@ def add_photon_weights(weights: Weights, year: str, photons):
     else:
         cset = correctionlib.CorrectionSet.from_file(get_pog_json("photon2024", year))
 
-
-    id_nom = cset[id_key].evaluate(year_map[year], "sf", "Tight", photons.eta, photons.pt)
-    id_up = cset[id_key].evaluate(year_map[year], "sfup", "Tight", photons.eta, photons.pt)
-    id_down = cset[id_key].evaluate(year_map[year], "sfdown", "Tight", photons.eta, photons.pt)
+    if "2023" in year:   
+        #json format is different for 23 and 23BPix
+        #https://twiki.cern.ch/twiki/bin/view/CMS/EgammSFandSSRun3#Photon_JSON_format_AN1
+        id_nom = cset[id_key].evaluate(year_map[year], "sf", "Tight", photons.eta, photons.pt, photons.phi)
+        id_up = cset[id_key].evaluate(year_map[year], "sfup", "Tight", photons.eta, photons.pt, photons.phi)
+        id_down = cset[id_key].evaluate(year_map[year], "sfdown", "Tight", photons.eta, photons.pt, photons.phi)
+    else:
+        id_nom = cset[id_key].evaluate(year_map[year], "sf", "Tight", photons.eta, photons.pt)
+        id_up = cset[id_key].evaluate(year_map[year], "sfup", "Tight", photons.eta, photons.pt)
+        id_down = cset[id_key].evaluate(year_map[year], "sfdown", "Tight", photons.eta, photons.pt)
 
     weights.add("photon_ID", id_nom, id_up, id_down)
 

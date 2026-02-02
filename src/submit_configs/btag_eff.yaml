@@ -1,0 +1,22 @@
+{
+  "2022": {
+    "QCD": { "files_per_job": 5, },
+    "TT": { "files_per_job": 8, },
+  },
+  "2022EE": {
+    "QCD": { "files_per_job": 4, },
+    "TT": { "files_per_job": 8, },
+  },
+  "2023": {
+    "QCD": { "files_per_job": 5, },
+    "TT": { "files_per_job": 8, },
+  },
+  "2023BPix": {
+    "QCD": { "files_per_job": 5, },
+    "TT": { "files_per_job": 8, },
+  },
+  "2024": {
+    "QCD": { "files_per_job": 5, },
+    "TT": { "files_per_job": 8, },
+  }
+}
