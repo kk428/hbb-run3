@@ -18,13 +18,21 @@ def scale_by_bin_width(hist):
 def draw(args, index: int, region: str, cat: str, logscale: bool = True):
 
     tag = args.tag
-    year = args.year
     fit = args.fit
+    year = args.year
 
     common_dir = f"results/{tag}/{year}"
 
     rZbb = 1.0
-    year_string = f"{(LUMI[year] / 1000.0):0.1f}/fb, {year}"
+
+    year_loop = [year]
+    if year == "Run3":
+        year_string = f"{(LUMI['2022-2023'] / 1000.0):0.1f}/fb, 22-23"
+        year_loop = ["2022", "2022EE", "2023", "2023BPix"]
+    else:
+        year_string = f"{(LUMI[year] / 1000.0):0.1f}/fb, {year}"
+
+
 
     thisbin = f"pt{index + 1}"
     thisbin_fit = f"ptbin{index}{cat}"
@@ -58,35 +66,111 @@ def draw(args, index: int, region: str, cat: str, logscale: bool = True):
             data_obs.SetBinError(i, 0)
 
     filename = f"{common_dir}/datacards/testModel_{year}/fitDiagnosticsTest.root"
-    name_plot = f"{thisbin_fit}{region.replace('_', '')}{year}"
-
-    histdirname = None
-    if fit == "prefit":
-        histdirname = f"shapes_prefit/{name_plot}/"
-    elif fit == "postfit":
-        histdirname = f"shapes_fit_s/{name_plot}/"
-    print("histdirname:", histdirname)
+    out_name_plot = f"{thisbin_fit}{region.replace('_', '')}{year}"
 
     f = ROOT.TFile(filename, "READ")
     if not f or f.IsZombie():
         raise RuntimeError(f"Could not open {filename}")
+    
+    VBF = data_obs.Clone("VBF_empty")
+    VBF.Reset()
+    ggF = data_obs.Clone("ggF_empty")
+    ggF.Reset()
+    VH = data_obs.Clone("VH_empty")
+    VH.Reset()
+    bkgHiggs = data_obs.Clone("bkgHiggs_empty")
+    bkgHiggs.Reset()
+    VV = data_obs.Clone("VV_empty")
+    VV.Reset()
+    singlet = data_obs.Clone("singlet_empty")
+    singlet.Reset()
+    ttbar = data_obs.Clone("ttbar_empty")
+    ttbar.Reset()
+    Zjets = data_obs.Clone("Zjets_empty")
+    Zjets.Reset()
+    Zjets2 = data_obs.Clone("Zjets2_empty")
+    Zjets2.Reset()
+    Zjetsbb = data_obs.Clone("Zjetsbb_empty")
+    Zjetsbb.Reset()
+    Wjets = data_obs.Clone("Wjets_empty")
+    Wjets.Reset()
+    qcd = data_obs.Clone("qcd_empty")
+    qcd.Reset()
+    TotalBkg = data_obs.Clone("TotalBkg_empty")
+    TotalBkg.Reset()
+
+    for year in year_loop:
+    
+        name_plot = f"{thisbin_fit}{region.replace('_', '')}{year}"
+
+        histdirname = None
+        if fit == "prefit":
+            histdirname = f"shapes_prefit/{name_plot}/"
+        elif fit == "postfit":
+            histdirname = f"shapes_fit_s/{name_plot}/"
+        
+        tmp_VBF = f.Get(histdirname + "VBF")
+        if(tmp_VBF):
+            VBF.Add(tmp_VBF)
+        tmp = f.Get(histdirname + "ggF")
+        if tmp:
+            ggF.Add(tmp)
+        tmp_wh = f.Get(histdirname + "WH")
+        if tmp_wh:
+            VH.Add(tmp_wh)
+        tmp_zh = f.Get(histdirname + "ZH")
+        if tmp_zh:
+            VH.Add(tmp_zh)
+        tmp_tth = f.Get(histdirname + "ttH")
+        if tmp_tth:
+            bkgHiggs.Add(tmp_tth)
+        tmp_vv = f.Get(histdirname + "VV")
+        if tmp_vv:
+            VV.Add(tmp_vv)
+        tmp_sing = f.Get(histdirname + "singlet")
+        if tmp_sing:
+            singlet.Add(tmp_sing)
+        tmp_tt = f.Get(histdirname + "ttbar")
+        if tmp_tt:
+            ttbar.Add(tmp_tt)
+        tmp_Zjets = f.Get(histdirname + "Zjetsc")
+        if tmp_Zjets:
+            Zjets.Add(tmp_Zjets)
+        tmp_ewkz = f.Get(histdirname + "EWKZc")
+        if tmp_ewkz:
+            Zjets.Add(tmp_ewkz)
+        tmp_Zjets2 = f.Get(histdirname + "Zjetslight")
+        if tmp_Zjets2:
+            Zjets2.Add(tmp_Zjets2)
+        tmp_ewkz2 = f.Get(histdirname + "EWKZlight")
+        if tmp_ewkz2:
+            Zjets2.Add(tmp_ewkz2)
+        tmp_Zjetsbb = f.Get(histdirname + "Zjetsbb")
+        if tmp_Zjetsbb:
+            Zjetsbb.Add(tmp_Zjetsbb)
+        tmp_ewkzb = f.Get(histdirname + "EWKZbb")
+        if tmp_ewkzb:
+            Zjetsbb.Add(tmp_ewkzb)
+        tmp_Wjets = f.Get(histdirname + "Wjets")
+        if tmp_Wjets:
+            Wjets.Add(tmp_Wjets)
+        tmp_ewk = f.Get(histdirname + "EWKW")
+        if tmp_ewk:
+            Wjets.Add(tmp_ewk)
+        tmp_qcd = f.Get(histdirname + "qcd")
+        if tmp_qcd:
+            qcd.Add(tmp_qcd)
+        tmp_tb = f.Get(histdirname + "total_background")
+        if tmp_tb:
+            TotalBkg.Add(tmp_tb)
 
     # VBF
-    VBF = f.Get(histdirname + "VBF")
-    if not VBF:
-        VBF = data_obs.Clone("VBF_empty")
-        VBF.Reset()
     VBF, scale = scale_by_bin_width(VBF)
     VBF.SetLineColor(ROOT.kGreen + 1)
     VBF.SetMarkerColor(ROOT.kGreen + 1)
     VBF.SetLineWidth(3)
 
     # ggF
-    ggF = VBF.Clone("ggF")
-    ggF.Reset()
-    tmp = f.Get(histdirname + "ggF")
-    if tmp:
-        ggF.Add(tmp)
     ggF, scale = scale_by_bin_width(ggF)
     ggF.SetLineColor(ROOT.kRed + 1)
     ggF.SetMarkerColor(ROOT.kRed + 1)
@@ -94,14 +178,6 @@ def draw(args, index: int, region: str, cat: str, logscale: bool = True):
     ggF.SetLineWidth(3)
 
     # VH
-    VH = VBF.Clone("VH")
-    VH.Reset()
-    tmp_wh = f.Get(histdirname + "WH")
-    if tmp_wh:
-        VH.Add(tmp_wh)
-    tmp_zh = f.Get(histdirname + "ZH")
-    if tmp_zh:
-        VH.Add(tmp_zh)
     VH, scale = scale_by_bin_width(VH)
     VH.SetLineColor(ROOT.kBlue + 1)
     VH.SetMarkerColor(ROOT.kBlue + 1)
@@ -109,104 +185,64 @@ def draw(args, index: int, region: str, cat: str, logscale: bool = True):
     VH.SetLineWidth(3)
 
     # bkg Higgs
-    bkgHiggs = VBF.Clone("bkgHiggs")
-    bkgHiggs.Reset()
-    tmp_tth = f.Get(histdirname + "ttH")
-    if tmp_tth:
-        bkgHiggs.Add(tmp_tth)
     bkgHiggs, scale = scale_by_bin_width(bkgHiggs)
     bkgHiggs.SetLineWidth(1)
     bkgHiggs.SetLineColor(ROOT.kBlack)
     bkgHiggs.SetFillColor(ROOT.kOrange)
 
     # VV
-    VV = VBF.Clone("VV")
-    VV.Reset()
-    tmp_vv = f.Get(histdirname + "VV")
-    if tmp_vv:
-        VV.Add(tmp_vv)
     VV, scale = scale_by_bin_width(VV)
     VV.SetLineWidth(1)
     VV.SetLineColor(ROOT.kBlack)
     VV.SetFillColor(ROOT.kOrange - 3)
 
     # single t
-    singlet = VBF.Clone("singlet")
-    singlet.Reset()
-    tmp_sing = f.Get(histdirname + "singlet")
-    if tmp_sing:
-        singlet.Add(tmp_sing)
     singlet, scale = scale_by_bin_width(singlet)
     singlet.SetLineWidth(1)
     singlet.SetLineColor(ROOT.kBlack)
     singlet.SetFillColor(ROOT.kPink + 6)
 
     # ttbar
-    ttbar = VBF.Clone("ttbar")
-    ttbar.Reset()
-    tmp_tt = f.Get(histdirname + "ttbar")
-    if tmp_tt:
-        ttbar.Add(tmp_tt)
     ttbar, scale = scale_by_bin_width(ttbar)
+    ttbar.SetLineWidth(1)
     ttbar.SetLineColor(ROOT.kBlack)
     ttbar.SetFillColor(ROOT.kViolet - 5)
 
     # Z + jets
-    Zjets = VBF.Clone("Zjets")
-    Zjets.Reset()
-    tmp_Zjets = f.Get(histdirname + "Zjets")
-    if tmp_Zjets:
-        Zjets.Add(tmp_Zjets)
-    tmp_ewkz = f.Get(histdirname + "EWKZ")
-    if tmp_ewkz:
-        Zjets.Add(tmp_ewkz)
     Zjets, scale = scale_by_bin_width(Zjets)
+    Zjets.SetLineWidth(1)
     Zjets.SetLineColor(ROOT.kBlack)
     Zjets.SetFillColor(ROOT.kAzure + 8)
 
+    # Z + jets
+    Zjets2, scale = scale_by_bin_width(Zjets2)
+    Zjets2.SetLineWidth(1)
+    Zjets2.SetLineColor(ROOT.kBlack)
+    Zjets2.SetFillColor(ROOT.kPink + 8)
+
     # Z(bb) + jets
-    Zjetsbb = VBF.Clone("Zjetsbb")
-    Zjetsbb.Reset()
-    tmp_Zjetsbb = f.Get(histdirname + "Zjetsbb")
-    if tmp_Zjetsbb:
-        Zjetsbb.Add(tmp_Zjetsbb)
-    tmp_ewkzb = f.Get(histdirname + "EWKZbb")
-    if tmp_ewkzb:
-        Zjetsbb.Add(tmp_ewkzb)
     Zjetsbb, scale = scale_by_bin_width(Zjetsbb)
     Zjetsbb.Scale(rZbb)
+    Zjetsbb.SetLineWidth(1)
     Zjetsbb.SetLineColor(ROOT.kBlack)
     Zjetsbb.SetFillColor(ROOT.kAzure - 1)
 
     # W + jets
-    Wjets = VBF.Clone("Wjets")
-    Wjets.Reset()
-    tmp_Wjets = f.Get(histdirname + "Wjets")
-    if tmp_Wjets:
-        Wjets.Add(tmp_Wjets)
-    tmp_ewk = f.Get(histdirname + "EWKW")
-    if tmp_ewk:
-        Wjets.Add(tmp_ewk)
     Wjets, scale = scale_by_bin_width(Wjets)
+    Wjets.SetLineWidth(1)
     Wjets.SetLineColor(ROOT.kBlack)
     Wjets.SetFillColor(ROOT.kGray)
 
     # QCD
-    qcd= VBF.Clone("qcd")
-    qcd.Reset()
-    tmp_qcd = f.Get(histdirname + "qcd")
-    if tmp_qcd:
-        qcd.Add(tmp_qcd)
     qcd, scale = scale_by_bin_width(qcd)
+    qcd.SetLineWidth(1)
     qcd.SetLineColor(ROOT.kBlack)
     qcd.SetFillColor(ROOT.kWhite)
 
     # Total background
-    TotalBkg = f.Get(histdirname + "total_background")
-    if not TotalBkg:
-        raise RuntimeError(f"Could not get total_background from {histdirname}")
     TotalBkg, scale = scale_by_bin_width(TotalBkg)
     TotalBkg.SetMarkerColor(ROOT.kRed)
+    TotalBkg.SetMarkerSize(0.000000001)
     TotalBkg.SetLineColor(ROOT.kRed)
     TotalBkg.SetFillColor(ROOT.kRed)
     TotalBkg.SetFillStyle(3003)
@@ -229,6 +265,7 @@ def draw(args, index: int, region: str, cat: str, logscale: bool = True):
         bkg.Add(singlet)
         bkg.Add(ttbar)
         bkg.Add(Zjets)
+        bkg.Add(Zjets2)
         bkg.Add(Zjetsbb)
         bkg.Add(Wjets)
         bkg.Add(qcd)
@@ -237,6 +274,7 @@ def draw(args, index: int, region: str, cat: str, logscale: bool = True):
         bkg.Add(Wjets)
         bkg.Add(Zjetsbb)
         bkg.Add(Zjets)
+        bkg.Add(Zjets2)
         bkg.Add(ttbar)
         bkg.Add(singlet)
         bkg.Add(VV)
@@ -301,7 +339,8 @@ def draw(args, index: int, region: str, cat: str, logscale: bool = True):
     leg.AddEntry(TotalBkg, "Bkg. Unc.", "f")
     leg.AddEntry(qcd, "QCD", "f")
     leg.AddEntry(Wjets, "W", "f")
-    leg.AddEntry(Zjets, "Z(qq)", "f")
+    leg.AddEntry(Zjets, "Z(cc)", "f")
+    leg.AddEntry(Zjets2, "Z(light)", "f")
     leg.AddEntry(Zjetsbb, "Z(bb)", "f")
     leg.AddEntry(ttbar, "t#bar{t}", "f")
     leg.AddEntry(singlet, "Single t", "f")
@@ -325,11 +364,13 @@ def draw(args, index: int, region: str, cat: str, logscale: bool = True):
     l2.SetTextSize(textsize1)
     l2.DrawLatex(0.7, 0.92, year_string)
 
-    text3 = "PN BB+CC Fail Region" 
+    text3 = "BB+CC Fail Region" 
     if region == "pass_bb":
-        text3 = "PN BB Pass Region"
+        text3 = "BB Pass Region"
     elif region == "pass_cc":
-        text3 = "PN CC Pass Region"
+        text3 = "CC Pass Region"
+    elif region == "pass":
+        text3 = "BB Pass Region"
     l3 = ROOT.TLatex()
     l3.SetNDC()
     l3.SetTextFont(42)
@@ -412,8 +453,8 @@ def draw(args, index: int, region: str, cat: str, logscale: bool = True):
     # Save
     outdir = f"{common_dir}/plots/{fit}"
     os.makedirs(outdir, exist_ok=True)
-    outpng = os.path.join(outdir, f"{name_plot}.png")
-    outpdf = os.path.join(outdir, f"{name_plot}.pdf")
+    outpng = os.path.join(outdir, f"{out_name_plot}.png")
+    outpdf = os.path.join(outdir, f"{out_name_plot}.pdf")
     c.SaveAs(outpng)
     c.SaveAs(outpdf)
 
@@ -429,7 +470,7 @@ if __name__ == "__main__":
         help="year",
         type=str,
         required=True,
-        choices=["2022", "2022EE", "2023", "2023BPix"],
+        choices=["2022", "2022EE", "2023", "2023BPix","Run3"],
     )
     parser.add_argument(
         "--tag",

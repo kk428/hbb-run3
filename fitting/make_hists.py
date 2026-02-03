@@ -89,6 +89,7 @@ def fill_hists(outdict, events, region, reg_cfg, obs_cfg, qq_true, s, j_var=None
 def main(args):
     year = args.year
     tag = args.tag
+    do_systs = args.systs
 
     path_to_dir = f"/eos/uscms/store/group/lpchbbrun3/skims/{tag}"
     
@@ -115,13 +116,13 @@ def main(args):
     ]
 
     systs = [
-        'ISRPartonShower',
-        'FSRPartonShower', 
-        'aS_weight',
-        'PDF_weight',  
-        'PDFaS_weight', 
-        'scalevar_7pt', 
-        'scalevar_3pt',
+        # 'ISRPartonShower',
+        # 'FSRPartonShower', 
+        # 'aS_weight',
+        # 'PDF_weight',  
+        # 'PDFaS_weight', 
+        # 'scalevar_7pt', 
+        # 'scalevar_3pt',
         'pileup',
         'btagSFb_correlated',
         'btagSFc_correlated',
@@ -192,7 +193,7 @@ def main(args):
                             events = utils.load_samples(
                                 data_dir,
                                 {process: [dataset]},
-                                columns=columns if "data" in process else columns+c_systs_full,
+                                columns=columns if (("data" in process) or (not do_systs)) else columns+c_systs_full,
                                 region=cfg["name"],
                                 filters=filters,
                                 variation=var
@@ -203,27 +204,29 @@ def main(args):
 
                             fill_hists(out_hists, events, reg, cfg, obs_cfg, (process in samples_qq), "nominal", var)
 
-                            if "data" not in process:
-                                for syst in c_systs_full:
-                                    fill_hists(out_hists, events, reg, cfg, obs_cfg, (process in samples_qq), f"{syst}", var)
+                            if do_systs:
+                                if "data" not in process:
+                                    for syst in c_systs_full:
+                                        fill_hists(out_hists, events, reg, cfg, obs_cfg, (process in samples_qq), f"{syst}", var)
 
-                        else:   #energy variations
-                            for direction in ["Up", "Down"]:
-                                var_jerc = f"{var}{direction}"
+                        if do_systs:
+                            if var:   #energy variations
+                                for direction in ["Up", "Down"]:
+                                    var_jerc = f"{var}{direction}"
 
-                                events = utils.load_samples(
-                                    data_dir,
-                                    {process: [dataset]},
-                                    columns=columns,
-                                    region=cfg["name"],
-                                    filters=filters,
-                                    variation=var_jerc
-                                )
+                                    events = utils.load_samples(
+                                        data_dir,
+                                        {process: [dataset]},
+                                        columns=columns,
+                                        region=cfg["name"],
+                                        filters=filters,
+                                        variation=var_jerc
+                                    )
 
-                                if not events:
-                                    continue
+                                    if not events:
+                                        continue
 
-                                fill_hists(out_hists, events, reg, cfg, obs_cfg, (process in samples_qq), var_jerc, var_jerc)
+                                    fill_hists(out_hists, events, reg, cfg, obs_cfg, (process in samples_qq), var_jerc, var_jerc)
 
 
     for name, h in out_hists.items():
@@ -245,6 +248,12 @@ if __name__ == "__main__":
         help="tag",
         type=str,
         required=True
+    )
+    parser.add_argument(
+        "--systs",
+        action="store_true",
+        help="Create hists for systematic variations",
+        default=False,
     )
     args = parser.parse_args()
 
