@@ -53,14 +53,14 @@ def merge_hists(hist_dict, merge_map):
     return hist_dict
 
 
-def format_legend(ax, ncols=2, handles_labels=None, **kwargs):
+def format_legend(ax, ncols=2, handles_labels=None, title=None, **kwargs):
     if handles_labels is None:
         handles, labels = ax.get_legend_handles_labels()
     else:
         handles, labels = handles_labels
     nentries = len(handles)
 
-    kw = dict(framealpha=1, **kwargs)
+    kw = dict(framealpha=1, title=title, **kwargs)
     split = nentries // ncols * ncols
     leg1 = ax.legend(
         handles=handles[:split],
@@ -90,7 +90,7 @@ def format_legend(ax, ncols=2, handles_labels=None, **kwargs):
 def ratio_plot(
     hist_dict: dict[hist.Hist],
     # Sample plotting opts
-    sigs: list[str] | None = None,  # List of samples considered signals
+    sigs: list[str],  # List of samples considered signals  | None = None
     bkgs: (
         list[str] | None
     ) = None,  # List of samples considered background - exclude "onto" sample i.e. QCD
@@ -98,6 +98,8 @@ def ratio_plot(
     # Style opts
     style: dict | None = None,  # Style YAML
     ratio_with_uncertainty: bool = False,  # Whether to plot ratio/data uncertainty in the ratio
+    sort_by_yield: bool = True,  # Whether to sort backgrounds by yield
+    legend_title: str | None = None,
 ):
     style = style.copy()
 
@@ -105,18 +107,25 @@ def ratio_plot(
     merge = extract_mergemap(style)
     hist_dict = merge_hists(hist_dict, merge)
 
+    # --- NEW SORTING LOGIC ---
+    if sort_by_yield and bkgs:
+        bkg_keys_in_plot = [key for key in bkgs if key in hist_dict]
+        bkg_yields = {key: hist_dict[key].sum() for key in bkg_keys_in_plot}
+        # print(f"Bkg yields before sorting: {bkg_yields}")
+        bkgs = sorted(bkg_yields, key=bkg_yields.get, reverse=True)
+        # print(f"Bkg order after sorting by yield: {bkgs}")
+    # --- END NEW LOGIC ---
+
     data = hist_dict.get("data", None)
-    all_bkgs = [h for k, h in hist_dict.items() if k in bkgs] if bkgs else None
-    if onto is not None:
-        all_bkgs = all_bkgs + [hist_dict[onto]] if onto in hist_dict else all_bkgs
-    tot_bkg = sum(all_bkgs) if all_bkgs else None
+    all_bkg_keys = bkgs + ([onto] if onto else []) if bkgs else ([onto] if onto else [])
+    all_bkgs_hists = [hist_dict[k] for k in all_bkg_keys if k in hist_dict]
+    tot_bkg = sum(all_bkgs_hists) if all_bkgs_hists else None
 
     fig, (ax, rax) = plt.subplots(2, 1, gridspec_kw={"height_ratios": (3, 1)}, sharex=True)
     plt.subplots_adjust(hspace=0)
     plt.rcParams.update({"font.size": 24})
 
     if onto is None:
-        # plot all the background and signal histograms
         hep.histplot(
             [hist_dict[k] for k in bkgs + sigs],
             ax=ax,
@@ -126,7 +135,6 @@ def ratio_plot(
             facecolor=[style[k]["color"] for k in bkgs + sigs],
         )
     else:
-        # plot the first background onto which others will be plotted
         if onto in hist_dict:
             hep.histplot(
                 hist_dict[onto],
@@ -137,7 +145,6 @@ def ratio_plot(
                 facecolor=style[onto]["color"],
             )
 
-        # other histograms
         _hatch = [None, *[style[k]["hatch"] for k in bkgs + sigs]]
         _edgecolor = [
             style[k]["color"] if h not in ["none", None] else None
@@ -150,10 +157,7 @@ def ratio_plot(
         _linewidth = [2] + [0] * len(bkgs + sigs)
 
         hep.histplot(
-            [
-                hist_dict[onto],
-                *[hist_dict[k] for k in bkgs + sigs],
-            ],
+            [hist_dict[onto]] + [hist_dict[k] for k in bkgs + sigs],
             ax=ax,
             label=["_", *(bkgs + sigs)],
             stack=True,
@@ -203,6 +207,7 @@ def ratio_plot(
         fontsize=_legend_fontsize,
         labelspacing=0.4,
         columnspacing=1.5,
+        title=legend_title,
     )
     hep.yscale_legend(ax, soft_fail=True)
 

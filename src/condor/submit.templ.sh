@@ -30,10 +30,15 @@ commithash=$$(git rev-parse HEAD)
 echo "https://github.com/kk428/hbb-run3/commit/$${commithash}" > commithash.txt
 
 pip install -e .
+pip install xgboost
 
-# run code (saving skim always)
-python -u -W ignore $script --year $year --starti $starti --endi $endi --samples $sample --subsamples $subsample --nano-version ${nano_version} --save-skim
-
+# run code 
+if [[ $BDT == True ]]; then
+    python -u -W ignore $script --BDT --year $year --starti $starti --endi $endi --samples $sample --subsamples $subsample --nano-version ${nano_version} --${run_mode}
+    echo "BDT option enabled!"
+else
+    python -u -W ignore $script --year $year --starti $starti --endi $endi --samples $sample --subsamples $subsample --nano-version ${nano_version} --${run_mode}
+fi
 # Move final output to EOS
 # This new logic recursively copies the region directories created by the processor
 
@@ -50,16 +55,18 @@ xrdcp -f *.pkl "${t2_prefixes}/${outdir}/pickles/out_${jobnum}.pkl"
 # 2. Next, handle the combined parquet files
 for file in *.parquet; do
     # Extract the region name from the local filename (e.g., gets "control-tt" from "control-tt.parquet")
-    region_name=$$(basename "$${file}" ".parquet")
+    base_file=$$(basename "$${file}" ".parquet")
+    region_name="$${base_file##*_}"
+    jer_name="$${base_file%_*}"
 
     # Create the region-specific subdirectory on EOS
-    xrdfs ${t2_prefixes} mkdir -p "/${outdir}/parquet/$${region_name}"
+    xrdfs ${t2_prefixes} mkdir -p "/${outdir}/parquet/$${jer_name}/$${region_name}"
 
     # Define the final filename using the job number for uniqueness
     final_filename="part${jobnum}.parquet"
 
     # Copy the file to its final, nested destination with the new name
-    xrdcp -f "$$file" "${t2_prefixes}/${outdir}/parquet/$${region_name}/$${final_filename}"
+    xrdcp -f "$$file" "${t2_prefixes}/${outdir}/parquet/$${jer_name}/$${region_name}/$${final_filename}"
 done
 
 

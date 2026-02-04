@@ -73,3 +73,28 @@ other:
   contains:
   - diboson
   - ewkv
+
+
+# Z-jets colors (shades of blue-green)
+zjets_b-jet:
+  label: 'Z->b-jet'
+  color: '#005f73' # Darker blue-green
+  hatch: null
+zjets_c-jet:
+  label: 'Z->c-jet'
+  color: '#0a9396' # Medium blue-green
+  hatch: null
+zjets_light-jet:
+  label: 'Z->light-jet'
+  color: '#94d2bd' # Lighter blue-green
+  hatch: null
+
+# W-jets colors (shades of green)
+wjets_c-jet:
+  label: 'W->c-jet'
+  color: '#52b788' # Medium green
+  hatch: null
+wjets_light-jet:
+  label: 'W->light-jet'
+  color: '#b7e4c7' # Lighter green
+  hatch: null

@@ -52,7 +52,7 @@ unset __mamba_setup
 
 Then create an environment:
 ```
-micromamba create -n hbb python=3.10 -c conda-forge
+micromamba create -n hbb python=3.10 root -c conda-forge
 micromamba activate hbb
 # install ipykernel for running jupyter notebooks
 micromamba install  -n hbb ipykernel
@@ -103,69 +103,19 @@ To run on a single file (starting index at 0, ending index at 1) for one subsamp
 python src/run.py --sample Hbb --subsample GluGluHto2B_PT-200_M-125 --starti 0 --endi 1
 ```
 To save skim, add `--save-skim`
+To save skim with no systematics, add `-save-skim-nosysts`
+To save the AK4 btag efficiencies, add `--btag-eff`
 
 To run on multiple subsamples:
 ```
 python src/run.py --sample Hbb --subsample GluGluHto2B_PT-200_M-125  VBFHto2B_M-125 --starti 0 --endi 1
 ```
 
-## Submit jobs with DASK
-
-**Singularity**: (for submitting jobs)
-Set up environment by following instructions at https://github.com/CoffeaTeam/lpcjobqueue/
-
-Enable singularity
-```bash
-./shell coffeateam/coffea-dask-almalinux9:latest
-```
-
-**In the bash shell:**
-
-Run the processor for a certain year:
-```bash
-python3 src/submit.py --year $YEAR --tag $TAG --yaml src/submit_configs/hbb_example.yaml
-```
-e.g.:
-```
-python3 src/submit.py --year 2022 --tag test --yaml src/submit_configs/hbb_example.yaml
-```
-
-
-Format your tags as `TAG=YRMonthDay` e.g. `TAG=25May22`. You can do that with:
-```bash
-export TAG=25May22
-export YEAR=2022
-```
-
-To enable the skimming option, add `--save-skim`
-
-The processor will output parquet files for each of the regions defined in categorizer.py, for example:
-
-```python
-regions = {
-    "signal-ggf",
-    "signal-vh",
-    "signal-vbf",
-    "control-tt",
-}
-```
-It is then straightforward to define regions and cuts in order to customize skims for individual studies.
-
-### Debugging
-
-- Look for error:
-```
-proxy has expired
-```
-if your proxy is not valid in the dask submission.
-Note: Start your proxy outside your `./shell` singularity environment.
-
-
 ## Submit jobs with CONDOR
 
 To submit a specific subsample:
 ```bash
-python src/condor/submit.py --tag $TAG  --samples Hbb --subsamples GluGluHto2B_PT-200_M-125 --git-branch main  --allow-diff-local-repo --submit
+python src/condor/submit.py --tag $TAG  --samples Hbb --subsamples GluGluHto2B_PT-200_M-125 --git-branch main  --allow-diff-local-repo --run-mode save-skim --submit
 ```
 - Format your tags as `TAG=YRMonthDay` e.g. `TAG=25May22`.
 - You **must** specify the git branch name
@@ -175,7 +125,7 @@ This will create a set of condor submission files. To submit add: `--submit`.
 
 To submit a set of samples:
 ```bash
-nohup python src/condor/submit_from_yaml.py --tag $TAG --yaml src/submit_configs/${YAML}.yaml --year $YEAR --git-branch main --nano-version v12 --submit &> tmp/submitout.txt &
+nohup python src/condor/submit_from_yaml.py --tag $TAG --yaml src/submit_configs/${YAML}.yaml --year $YEAR --git-branch main --nano-version v12 --run-mode save-skim --submit &> tmp/submitout.txt &
 ```
 
 By default the yaml is: `src/submit_configs/hbb.yaml`.
@@ -184,7 +134,7 @@ For example:
 ```
 # For best practices, the script will automatically check if your code version is up to date in github. If you have changes that are not committed/pushed use --allow-diff-local-repo
 
-python src/condor/submit_from_yaml.py --yaml src/submit_configs/hbb.yaml --tag 25May23 --git-branch main --allow-diff-local-repo --year 2022EE
+python src/condor/submit_from_yaml.py --yaml src/submit_configs/hbb.yaml --tag 25May23 --git-branch main --allow-diff-local-repo --run-mode save-skim --year 2022EE
 ```
 
 To check whether jobs have finished use `src/condor/check_jobs.py`.

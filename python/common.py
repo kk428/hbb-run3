@@ -79,7 +79,10 @@ data_by_year = {
         "JetMET_Run2022G",
     },
     "2023": {
-        "JetMET_Run2023C",
+        "JetMET_Run2023Cv1",
+        "JetMET_Run2023Cv2",
+        "JetMET_Run2023Cv3",
+        "JetMET_Run2023Cv4",
     },
     "2023BPix": {
         "JetMET_Run2023D",

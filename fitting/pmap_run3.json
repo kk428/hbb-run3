@@ -1,0 +1,205 @@
+{
+    "Jetdata": [
+        "JetMET_Run2022C_single",
+        "JetMET_Run2022C",
+        "JetMET_Run2022D",
+        "JetMET_Run2022E",
+        "JetMET_Run2022F",
+        "JetMET_Run2022G",
+        "JetMET_Run2023Cv1",
+        "JetMET_Run2023Cv2",
+        "JetMET_Run2023Cv3",
+        "JetMET_Run2023Cv4",
+        "JetMET_Run2023D"
+    ],
+    "Muondata": [
+        "Muon_Run2022C_single",
+        "Muon_Run2022C",
+        "Muon_Run2022D",
+        "Muon_Run2022E",
+        "Muon_Run2022F",
+        "Muon_Run2022G",
+        "Muon_Run2023Cv1",
+        "Muon_Run2023Cv2",
+        "Muon_Run2023Cv3",
+        "Muon_Run2023Cv4",
+        "Muon_Run2023D"
+    ],
+    "EGammadata": [
+        "EGamma_Run2022C",
+        "EGamma_Run2022D",
+        "EGamma_Run2022E",
+        "EGamma_Run2022F",
+        "EGamma_Run2022G",
+        "EGamma_Run2023Cv1",
+        "EGamma_Run2023Cv2",
+        "EGamma_Run2023Cv3",
+        "EGamma_Run2023Cv4",
+        "EGamma_Run2023D"
+    ],
+    "ggF": [
+        "GluGluHto2B_M-125",
+        "GluGluHto2B_PT-200_M-125",
+        "GluGluHto2C_M-125",
+        "GluGluHto2C_PT-200_M-125"
+    ],
+    "VBF": [
+        "VBFHto2B_M-125_dipoleRecoilOn",
+        "VBFHto2C_M-125"
+    ],
+    "WH": [
+        "WminusH_Hto2B_Wto2Q_M-125",
+        "WminusH_Hto2B_WtoLNu_M-125",
+        "WplusH_Hto2B_Wto2Q_M-125",
+        "WplusH_Hto2B_WtoLNu_M-125",
+        "WminusH_Hto2C_Wto2Q_M-125",
+        "WminusH_Hto2C_WtoLNu_M-125",
+        "WplusH_Hto2C_Wto2Q_M-125",
+        "WplusH_Hto2C_WtoLNu_M-125"
+    ],
+    "ZH": [
+        "ZH_Hto2B_Zto2L_M-125",
+        "ZH_Hto2B_Zto2Q_M-125",
+        "ZH_Hto2B_Zto2Nu_M-125",
+        "ggZH_Hto2B_Zto2L_M-125",
+        "ggZH_Hto2B_Zto2Nu_M-125",
+        "ggZH_Hto2B_Zto2Q_M-125",
+        "ZH_Hto2C_Zto2L_M-125",
+        "ZH_Hto2C_Zto2Q_M-125",
+        "ZH_Hto2C_Zto2Nu_M-125",
+        "ggZH_Hto2C_Zto2L_M-125",
+        "ggZH_Hto2C_Zto2Nu_M-125",
+        "ggZH_Hto2C_Zto2Q_M-125"
+    ],
+    "ttH": [
+        "ttHto2B_M-125",
+        "ttHto2C_M-125"
+    ],
+    "QCD": [
+        "QCD_HT-100to200",
+        "QCD_HT-200to400",
+        "QCD_HT-400to600",
+        "QCD_HT-600to800",
+        "QCD_HT-800to1000",
+        "QCD_HT-1000to1200",
+        "QCD_HT-1200to1500",
+        "QCD_HT-1500to2000",
+        "QCD_HT-2000",
+        "QCD_HT-40to70",
+        "QCD_HT-70to100"
+    ],
+    "ttbar": [
+        "TTto4Q",
+        "TTto2L2Nu",
+        "TTtoLNu2Q"
+    ],
+    "singlet": [
+        "TbarBQ_t-channel_4FS",
+        "TBbarQ_t-channel_4FS",
+        "TbarWplusto4Q",
+        "TbarWplustoLNu2Q",
+        "TbarWplusto2L2Nu",
+        "TWminusto4Q",
+        "TWminustoLNu2Q",
+        "TWminusto2L2Nu"
+    ],
+    "VV": [
+        "WW",
+        "WZ",
+        "ZZ",
+        "WWto4Q",
+        "WWto4Q_1Jets-4FS",
+        "WZto4Q-1Jets-4FS"
+    ],
+    "Wjets": [
+        "Wto2Q-2Jets_PTQQ-100to200_1J",
+        "Wto2Q-2Jets_PTQQ-100to200_2J",
+        "Wto2Q-2Jets_PTQQ-200to400_1J",
+        "Wto2Q-2Jets_PTQQ-200to400_2J",
+        "Wto2Q-2Jets_PTQQ-400to600_1J",
+        "Wto2Q-2Jets_PTQQ-400to600_2J",
+        "Wto2Q-2Jets_PTQQ-600_1J",
+        "Wto2Q-2Jets_PTQQ-600_2J",
+        "WtoLNu-2Jets_0J",
+        "WtoLNu-2Jets_1J",
+        "WtoLNu-2Jets_2J",
+        "Wto2Q-3Jets_HT-200to400",
+        "Wto2Q-3Jets_HT-400to600",
+        "Wto2Q-3Jets_HT-600to800",
+        "Wto2Q-3Jets_HT-800",
+        "WtoLNu-4Jets_1J",
+        "WtoLNu-4Jets_2J",
+        "WtoLNu-4Jets_3J",
+        "WtoLNu-4Jets_4J"
+    ],
+    "Zjets": [
+        "Zto2Q-2Jets_PTQQ-100to200_1J",
+        "Zto2Q-2Jets_PTQQ-100to200_2J",
+        "Zto2Q-2Jets_PTQQ-200to400_1J",
+        "Zto2Q-2Jets_PTQQ-200to400_2J",
+        "Zto2Q-2Jets_PTQQ-400to600_1J",
+        "Zto2Q-2Jets_PTQQ-400to600_2J",
+        "Zto2Q-2Jets_PTQQ-600_1J",
+        "Zto2Q-2Jets_PTQQ-600_2J",
+        "DYto2L-2Jets_MLL-10to50",
+        "DYto2L-2Jets_MLL-50_0J",
+        "DYto2L-2Jets_MLL-50_1J",
+        "DYto2L-2Jets_MLL-50_2J",
+        "Zto2Q-4Jets_HT-200to400",
+        "Zto2Q-4Jets_HT-400to600",
+        "Zto2Q-4Jets_HT-600to800",
+        "Zto2Q-4Jets_HT-800",
+        "DYto2L-4Jets_MLL-10to50",
+        "DYto2L-4Jets_MLL-50_1J",
+        "DYto2L-4Jets_MLL-50_2J",
+        "DYto2L-4Jets_MLL-50_3J",
+        "DYto2L-4Jets_MLL-50_4J"
+    ],
+    "Wgamma": [
+        "WGtoLNuG-1Jets_PTG-100to200",
+        "WGtoLNuG-1Jets_PTG-200to400",
+        "WGtoLNuG-1Jets_PTG-400to600",
+        "WGtoLNuG-1Jets_PTG-600",
+        "WGto2QG-1Jets_PTG100to200",
+        "WGto2QG-1Jets_PTG200",
+        "WGtoLNuG-1Jets_PTG-10to100",
+        "WGto2QG-1Jets_PTG-100to200",
+        "WGto2QG-1Jets_PTG-200"
+    ],
+    "Zgamma": [
+        "ZGto2NuG-1Jets_PTG-400to600",
+        "ZGto2NuG-1Jets_PTG-100to200",
+        "ZGto2NuG-1Jets_PTG-200to400",
+        "ZGto2NuG-1Jets_PTG-600",
+        "ZGto2QG-1Jets_PTG-100to200",
+        "ZGto2QG-1Jets_PTG-200",
+        "ZGto2NuG-1Jets_PTG-10to100"
+    ],
+    "EWKZ": [
+        "VBFZto2Q",
+        "VBFZto2L",
+        "VBFZto2Nu"
+    ],
+    "EWKW": [
+        "VBFWto2Q",
+        "VBFWtoLNu"
+    ],
+    "ParkingSingleMuondata": [
+        "ParkingSingleMuon_Run2022F",
+        "ParkingSingleMuon_Run2022G"
+    ],
+    "ParkingDoubleMuonLowMassdata": [
+        "ParkingDoubleMuonLowMass_Run2022F",
+        "ParkingDoubleMuonLowMass_Run2022G"
+    ],
+    "ParkingHHdata": [
+        "ParkingHH_Run2023Cv1",
+        "ParkingHH_Run2023Cv2",
+        "ParkingHH_Run2023Cv3",
+        "ParkingHH_Run2023Cv4"
+    ],
+    "ParkingVBFdata": [
+        "ParkingVBF_Run2023Cv3",
+        "ParkingVBF_Run2023Cv4"
+    ]
+}
