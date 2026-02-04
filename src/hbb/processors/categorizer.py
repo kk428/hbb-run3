@@ -585,7 +585,7 @@ class categorizer(SkimmerABC):
         btag_SF = ak.ones_like(events.run)
         if isRealData:
             genflavor = ak.zeros_like(candidatejet.pt)
-            # genBosonPt = ak.zeros_like(candidatejet.pt)
+            genBosonPt = ak.zeros_like(candidatejet.pt)
         else:
             # signal regions
             weights_dict, totals_temp, btag_SF = self.add_weights(
@@ -600,10 +600,11 @@ class categorizer(SkimmerABC):
                 weights_gamma, events, dataset, ak4_outside_ak8, photons=vgammaphoton
             )
 
+
             for d, gen_func in gen_selection_dict.items():
                 if d in dataset:
                     # match goodfatjets
-                    # gen_variables = gen_func(events, goodfatjets)
+                    gen_variables = gen_func(events, goodfatjets)
 
             bosons = getBosons(events.GenPart)
             matchedBoson = candidatejet.nearest(bosons, axis=None, threshold=0.8)
