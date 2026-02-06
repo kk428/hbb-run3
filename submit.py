@@ -70,7 +70,7 @@ if __name__ == "__main__":
     print("local_dir: ", local_dir)
     yaml_path = local_dir / args.yaml
 
-    skim_dir = f"/store/group/lpchbbrun3/{os.environ['USER']}/{output_tag}/"
+    skim_dir = f"/store/user/{os.environ['USER']}/{output_tag}/"
     skim_outpath = f"root://cmseos.fnal.gov/{skim_dir}"
     outpath_local = f"outfiles/{output_tag}/"
 
