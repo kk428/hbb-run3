@@ -1,5 +1,8 @@
 {
     "2024": {
+        "VBS": {
+            "VBSWLWLToJets_Minus": ["kkrzyzan://cmslpc-el9.fnal.gov//eos/uscms/store/user/jennetd/vv/from_David/VBS_SSWmWmToJets_5f_LO_5M/NanoAODv15_VBS_SSWmWmToJets_5f_LO_Run3Summer24wmLHEGS_Nanov15_0.root"]
+        },
         "JetMET": {
             "JetMET_Run2024C": [
                 "root://cmsdcadisk.fnal.gov//dcache/uscmsdisk/store/data/Run2024C/JetMET0/NANOAOD/MINIv6NANOv15-v1/2530000/02d0d3cb-0be8-4b53-9742-4f40b2469051.root",
