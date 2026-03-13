@@ -35,7 +35,8 @@ def parse_common_args(parser):
         choices=[
             "v12",
             "v12v2_private",
-            "v14_private"
+            "v14_private",
+            "v15"
         ],
         help="NanoAOD version",
     )
