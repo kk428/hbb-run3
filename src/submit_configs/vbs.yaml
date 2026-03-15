@@ -1,5 +1,8 @@
 {  
   "2024": {
-    "VBS": { "files_per_job": 1, }
+    "QCD": { "files_per_job": 5, },
+    "Diboson": { "files_per_job": 20, },
+    "Diboson_extra": { "files_per_job": 20, },
+    # "VBS": { "files_per_job": 1, },
   }
 }
