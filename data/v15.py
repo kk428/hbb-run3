@@ -19,6 +19,12 @@ vgamma_pt_bins = ["10to100", "100to200", "200to400", "400to600", "600"]
 def get_datasets():
     return {
         "2024": {
+            "VBS": {
+                "VBSWLWLToJets_Minus": [
+                    f"/QCD-4Jets_Bin-HT-{num}_TuneCP5_13p6TeV_madgraphMLM-pythia8/RunIII2024Summer24NanoAODv15-150X_mcRun3_2024_realistic_v2-v2/NANOAODSIM"
+                    for num in range(5000)
+                ]
+                },
             "JetMET": {
                 "JetMET_Run2024C": [
                     "/JetMET0/Run2024C-MINIv6NANOv15-v1/NANOAOD",
