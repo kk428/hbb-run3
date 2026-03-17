@@ -70,9 +70,11 @@ xsecs["WZto3LNu"] = 1.786
 xsecs["WWto4Q"] = 78.79
 xsecs["WWtoLNu2Q"] = 76.16
 xsecs["WWto2L2Nu"] = 18.41
+
+xsecs["ZZto4Q-1Jets-4FS"] = 24.88
 # not in XSDB
-xsecs["WWto4Q_1Jets-4FS"] = 0
-xsecs["WZto4Q-1Jets-4FS"] = 0
+xsecs["WWto4Q_1Jets-4FS"] = 7.832
+xsecs["WZto4Q-1Jets-4FS"] = 24.88
 
 # SingleTop
 # https://twiki.cern.ch/twiki/bin/view/LHCPhysics/SingleTopNNLORef#Single_top_quark_tW_channel_cros
