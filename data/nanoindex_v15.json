@@ -1,7 +1,6 @@
 {
     "2024": {
         "VBS": {
-            "VBS_SSWmWmToJets_5f_LO_5M-2156": ["root://cmseos.fnal.gov//store/user/jennetd/vv/from_David/VBS_SSWmWmToJets_5f_LO_5M/NanoAODv15_VBS_SSWmWmToJets_5f_LO_Run3Summer24wmLHEGS_Nanov15_2156.root"],
             "VBS_SSWmWmToJets_5f_LO_5M": [
                 "root://cmseos.fnal.gov//store/user/jennetd/vv/from_David/VBS_SSWmWmToJets_5f_LO_5M/NanoAODv15_VBS_SSWmWmToJets_5f_LO_Run3Summer24wmLHEGS_Nanov15_0.root",
                 "root://cmseos.fnal.gov//store/user/jennetd/vv/from_David/VBS_SSWmWmToJets_5f_LO_5M/NanoAODv15_VBS_SSWmWmToJets_5f_LO_Run3Summer24wmLHEGS_Nanov15_1.root",
