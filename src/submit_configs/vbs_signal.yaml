@@ -1,5 +1,7 @@
 {  
   "2024": {
-    "VBS": { "files_per_job": 1, },
+    "VBS": { "subsamples": [
+      "VBS_SSWmWmToJets_5f_LO_5M-2156"],
+      "files_per_job": 1, },
   }
 }
