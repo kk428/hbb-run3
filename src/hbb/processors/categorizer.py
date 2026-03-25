@@ -79,6 +79,8 @@ def get_BDT_model(BDT_file: str):
         "FatJet0_eta",
         "FatJet0_n2b1",
         "FatJet0_n3b1",
+        "FatJet1_n2b1",
+        "FatJet1_n3b1",
         "FatJet1_pt",
         "FatJet1_phi",
         "FatJet1_eta",
@@ -516,6 +518,8 @@ class categorizer(SkimmerABC):
                 "FatJet0_eta": candidatejet.eta,
                 "FatJet0_n2b1": candidatejet.n2b1,
                 "FatJet0_n3b1": candidatejet.n3b1,
+                "FatJet1_n2b1": subleadingjet.n2b1,
+                "FatJet1_n3b1": subleadingjet.n3b1,
                 "FatJet1_pt": subleadingjet.pt,
                 "FatJet1_phi": subleadingjet.phi,
                 "FatJet1_eta": subleadingjet.eta,
@@ -610,7 +614,8 @@ class categorizer(SkimmerABC):
             genBosonPt = ak.fill_none(ak.firsts(bosons.pt), 0)
 
         # softdrop mass, 0 for genflavor == 0
-        msd_matched = candidatejet.msd * (genflavor > 0) + candidatejet.msd * (genflavor == 0)
+        msd_matched = candidatejet.msd * (genflavor > 0) # + candidatejet.msd * (genflavor == 0)
+        # also for fatjet 1
 
         regions = {
             "signal-all": [
@@ -772,6 +777,8 @@ class categorizer(SkimmerABC):
                 "FatJet0_msdmatched": msd_matched,
                 "FatJet0_n2b1": candidatejet.n2b1,
                 "FatJet0_n3b1": candidatejet.n3b1,
+                "FatJet1_n2b1": subleadingjet.n2b1,
+                "FatJet1_n3b1": subleadingjet.n3b1,
                 # "FatJet0_pnetMass": candidatejet.pnetmass,
                 # "FatJet0_pnetTXbb": candidatejet.particleNet_XbbVsQCD,
                 # "FatJet0_pnetTXcc": candidatejet.particleNet_XccVsQCD,
