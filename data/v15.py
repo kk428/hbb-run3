@@ -20,7 +20,7 @@ def get_datasets():
     return {
         "2024": {
             "VBS": {
-                "VBSWLWLToJets_Minus": [
+                "VBS_SSWmWmToJets_5f_LO_5M": [
                     f"/QCD-4Jets_Bin-HT-{num}_TuneCP5_13p6TeV_madgraphMLM-pythia8/RunIII2024Summer24NanoAODv15-150X_mcRun3_2024_realistic_v2-v2/NANOAODSIM"
                     for num in range(5000)
                 ]
