@@ -24,7 +24,7 @@ xsecs["VBS_OSWmWpToJets_5f_LO_5M"] = 1.109
 # xsecs["VBSZWpToJets_5f_LO_5M"] = 0.4415 # Jets to MET!
 xsecs["VBSZWmTo4Jets_5f_LO"] = 0.2854
 xsecs["VBSZWpTo4Jets_5f_LO"] = 0.4418
-xsecs["VBSZZToJets_5f_LO"] = 0.1771
+# xsecs["VBSZZToJets_5f_LO"] = 0.1771
 
 
 
