@@ -19,11 +19,11 @@ xsecs = {}
 # VBS Signal
 xsecs["VBS_SSWmWmToJets_5f_LO_5M"] = 0.1208
 xsecs["VBS_SSWpWpToJets_5f_LO_5M"] = 0.2944
-xsecs["VBS_OSWmWpToJets_5f_LO_5M"] = 1.109
+xsecs["VBS_OSWmWpTo4Q_5f_LO_5M"] = 1.109
 # xsecs["VBSZWmToJets_5f_LO_5M"] = 0.2857 # Jets to MET! also pick a better name
 # xsecs["VBSZWpToJets_5f_LO_5M"] = 0.4415 # Jets to MET!
 xsecs["VBSZWmTo4Jets_5f_LO"] = 0.2854
-xsecs["VBSZWpTo4Jets_5f_LO"] = 0.4418
+xsecs["VBSZWpTo4Q_5f_LO"] = 0.4418
 # xsecs["VBSZZToJets_5f_LO"] = 0.1771
 
 
