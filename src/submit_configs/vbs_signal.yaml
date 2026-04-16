@@ -1,6 +1,6 @@
 {  
   "2024": {
     "VBS": {
-      "files_per_job": 100, },
+      "files_per_job": 10, },
   }
 }
