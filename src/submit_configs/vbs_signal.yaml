@@ -1,7 +1,7 @@
 {  
   "2024": {
     "VBS": { 
-      "subsamples": [VBSZWmTo4Jets_5f_LO],
+      "subsamples": [VBSZZToJets_5f_LO],
       "files_per_job": 10, },
   }
 }
