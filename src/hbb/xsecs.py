@@ -64,9 +64,9 @@ xsecs["TTto2L2Nu"] = 923.6 * 0.333 * 0.333  # = 102.41 (96.9)
 xsecs["TTtoLNu2Q"] = 923.6 * 2 * (0.667 * 0.333)  # = 410.28 (404.0)
 
 # Diboson
-xsecs["WW"] = 116.8  #  173.4 (116.8 at NNLO)
-xsecs["WZ"] = 54.3
-xsecs["ZZ"] = 16.7
+xsecs["WW"] = 80.23
+xsecs["WZ"] = 29.1
+xsecs["ZZ"] = 12.75
 
 # Diboson extra
 xsecs["ZZto2L2Q"] = 2.36
@@ -80,9 +80,8 @@ xsecs["WWto4Q"] = 78.79
 xsecs["WWtoLNu2Q"] = 76.16
 xsecs["WWto2L2Nu"] = 18.41
 
-xsecs["ZZto4Q_1Jets-4FS"] = 24.88
-# not in XSDB
-xsecs["WWto4Q_1Jets-4FS"] = 7.832
+xsecs["ZZto4Q_1Jets-4FS"] = 7.832
+xsecs["WWto4Q_1Jets-4FS"] = 50.79
 xsecs["WZto4Q-1Jets-4FS"] = 24.88
 
 # SingleTop
