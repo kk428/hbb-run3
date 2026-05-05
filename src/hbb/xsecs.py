@@ -64,9 +64,9 @@ xsecs["TTto2L2Nu"] = 923.6 * 0.333 * 0.333  # = 102.41 (96.9)
 xsecs["TTtoLNu2Q"] = 923.6 * 2 * (0.667 * 0.333)  # = 410.28 (404.0)
 
 # Diboson
-xsecs["WW"] = 80.23
-xsecs["WZ"] = 29.1
-xsecs["ZZ"] = 12.75
+xsecs["WW"] = 116.8 # 173.4 (116.8 at NNLO) 
+xsecs["WZ"] = 54.3
+xsecs["ZZ"] = 16.7
 
 # Diboson extra
 xsecs["ZZto2L2Q"] = 2.36
