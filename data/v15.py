@@ -19,28 +19,28 @@ vgamma_pt_bins = ["10to100", "100to200", "200to400", "400to600", "600"]
 def get_datasets():
     return {
         "2024": {
-            "VBS": {
-                "VBSZWpTo4Jets_5f_LO": [
-                    f"/QCD-4Jets_Bin-HT-{num}_TuneCP5_13p6TeV_madgraphMLM-pythia8/RunIII2024Summer24NanoAODv15-150X_mcRun3_2024_realistic_v2-v2/NANOAODSIM"
-                    for num in range(5000)
-                ],               
-                "VBSZWmTo4Jets_5f_LO": [
-                    f"/QCD-4Jets_Bin-HT-{num}_TuneCP5_13p6TeV_madgraphMLM-pythia8/RunIII2024Summer24NanoAODv15-150X_mcRun3_2024_realistic_v2-v2/NANOAODSIM"
-                    for num in range(5000)
-                ],
-                "VBS_OSWmWpToJets_5f_LO_5M": [
-                    f"/QCD-4Jets_Bin-HT-{num}_TuneCP5_13p6TeV_madgraphMLM-pythia8/RunIII2024Summer24NanoAODv15-150X_mcRun3_2024_realistic_v2-v2/NANOAODSIM"
-                    for num in range(5000)
-                ],
-                "VBS_SSWpWpToJets_5f_LO_5M": [
-                    f"/QCD-4Jets_Bin-HT-{num}_TuneCP5_13p6TeV_madgraphMLM-pythia8/RunIII2024Summer24NanoAODv15-150X_mcRun3_2024_realistic_v2-v2/NANOAODSIM"
-                    for num in range(5000)
-                ],
-                "VBS_SSWmWmToJets_5f_LO_5M": [
-                    f"/QCD-4Jets_Bin-HT-{num}_TuneCP5_13p6TeV_madgraphMLM-pythia8/RunIII2024Summer24NanoAODv15-150X_mcRun3_2024_realistic_v2-v2/NANOAODSIM"
-                    for num in range(5000)
-                ]
-                },
+            # "VBS": {
+            #     "VBSZWpTo4Jets_5f_LO": [
+                #     f"/QCD-4Jets_Bin-HT-{num}_TuneCP5_13p6TeV_madgraphMLM-pythia8/RunIII2024Summer24NanoAODv15-150X_mcRun3_2024_realistic_v2-v2/NANOAODSIM"
+                #     for num in range(5000)
+                # ],               
+                # "VBSZWmTo4Jets_5f_LO": [
+                #     f"/QCD-4Jets_Bin-HT-{num}_TuneCP5_13p6TeV_madgraphMLM-pythia8/RunIII2024Summer24NanoAODv15-150X_mcRun3_2024_realistic_v2-v2/NANOAODSIM"
+                #     for num in range(5000)
+                # ],
+                # "VBS_OSWmWpToJets_5f_LO_5M": [
+                #     f"/QCD-4Jets_Bin-HT-{num}_TuneCP5_13p6TeV_madgraphMLM-pythia8/RunIII2024Summer24NanoAODv15-150X_mcRun3_2024_realistic_v2-v2/NANOAODSIM"
+                #     for num in range(5000)
+                # ],
+                # "VBS_SSWpWpToJets_5f_LO_5M": [
+                #     f"/QCD-4Jets_Bin-HT-{num}_TuneCP5_13p6TeV_madgraphMLM-pythia8/RunIII2024Summer24NanoAODv15-150X_mcRun3_2024_realistic_v2-v2/NANOAODSIM"
+                #     for num in range(5000)
+                # ],
+                # "VBS_SSWmWmToJets_5f_LO_5M": [
+                #     f"/QCD-4Jets_Bin-HT-{num}_TuneCP5_13p6TeV_madgraphMLM-pythia8/RunIII2024Summer24NanoAODv15-150X_mcRun3_2024_realistic_v2-v2/NANOAODSIM"
+                #     for num in range(5000)
+                # ]
+                # },
             "JetMET": {
                 "JetMET_Run2024C": [
                     "/JetMET0/Run2024C-MINIv6NANOv15-v1/NANOAOD",
@@ -218,7 +218,7 @@ def get_datasets():
             },
             "Diboson_extra": { 
                 "WWto4Q": "/WWto4Q_TuneCP5_13p6TeV_powheg-pythia8/RunIII2024Summer24NanoAODv15-150X_mcRun3_2024_realistic_v2-v2/NANOAODSIM",
-                "WWto2L2Nu": "/WWto2L2Nu_TuneCP5_13p6TeV_powheg-pythia8/RunIII2024Summer24NanoAODv15-150X_mcRun3_2024_realistic_v2-v2/NANOAODSIM"
+                "WWto2L2Nu": "/WWto2L2Nu_TuneCP5_13p6TeV_powheg-pythia8/RunIII2024Summer24NanoAODv15-150X_mcRun3_2024_realistic_v2-v2/NANOAODSIM",
                 "WWtoLNu2Q": "/WWtoLNu2Q_TuneCP5_13p6TeV_powheg-pythia8/RunIII2024Summer24NanoAODv15-150X_mcRun3_2024_realistic_v2-v2/NANOAODSIM",
                 "WZtoLNu2Q": "/WZtoLNu2Q_TuneCP5_13p6TeV_powheg-pythia8/RunIII2024Summer24NanoAODv15-150X_mcRun3_2024_realistic_v2-v2/NANOAODSIM",
                 "WZto2L2Q": "/WZto2L2Q_TuneCP5_13p6TeV_powheg-pythia8/RunIII2024Summer24NanoAODv15-150X_mcRun3_2024_realistic_v2-v2/NANOAODSIM",
