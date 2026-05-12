@@ -26,7 +26,28 @@ xsecs["VBSZWmTo4Jets_5f_LO"] = 0.2854
 xsecs["VBSZWpTo4Q_5f_LO"] = 0.4418
 xsecs["VBSZZToJets_5f_LO"] = 0.1771
 
+# Diboson
+xsecs["WW"] = 116.8 # 173.4 (116.8 at NNLO) 
+xsecs["WZ"] = 54.3
+xsecs["ZZ"] = 16.7
 
+# Diboson extra
+xsecs["ZZto2L2Q"] = 2.36
+xsecs["ZZto2Nu2Q"] = 4.48
+xsecs["ZZto4L"] = 0.170
+xsecs["ZZto2L2Nu"] = 0.674
+xsecs["WZtoLNu2Q"] = 12.368
+xsecs["WZto2L2Q"] = 3.696
+xsecs["WZto3LNu"] = 1.786
+xsecs["WZto2Nu2Q"] = 6.393
+xsecs["WZtoL3Nu"] = 3.077
+xsecs["WWto4Q"] = 78.79
+xsecs["WWtoLNu2Q"] = 76.16
+xsecs["WWto2L2Nu"] = 18.41
+
+xsecs["ZZto4Q_1Jets-4FS"] = 7.832
+xsecs["WWto4Q_1Jets-4FS"] = 50.79
+xsecs["WZto4Q-1Jets-4FS"] = 24.88
 
 # GJets: Obtained from XSDB
 xsecs["GJ_PTG-20to100"] = 195300
@@ -62,27 +83,6 @@ xsecs["QCD_HT-2000"] = 25.78
 xsecs["TTto4Q"] = 923.6 * 0.667 * 0.667  # = 410.89  (762.1)
 xsecs["TTto2L2Nu"] = 923.6 * 0.333 * 0.333  # = 102.41 (96.9)
 xsecs["TTtoLNu2Q"] = 923.6 * 2 * (0.667 * 0.333)  # = 410.28 (404.0)
-
-# Diboson
-xsecs["WW"] = 116.8 # 173.4 (116.8 at NNLO) 
-xsecs["WZ"] = 54.3
-xsecs["ZZ"] = 16.7
-
-# Diboson extra
-xsecs["ZZto2L2Q"] = 2.36
-xsecs["ZZto2Nu2Q"] = 4.48
-xsecs["ZZto4L"] = 0.170
-xsecs["ZZto2L2Nu"] = 0.674
-xsecs["WZtoLNu2Q"] = 12.368
-xsecs["WZto2L2Q"] = 3.696
-xsecs["WZto3LNu"] = 1.786
-xsecs["WWto4Q"] = 78.79
-xsecs["WWtoLNu2Q"] = 76.16
-xsecs["WWto2L2Nu"] = 18.41
-
-xsecs["ZZto4Q_1Jets-4FS"] = 7.832
-xsecs["WWto4Q_1Jets-4FS"] = 50.79
-xsecs["WZto4Q-1Jets-4FS"] = 24.88
 
 # SingleTop
 # https://twiki.cern.ch/twiki/bin/view/LHCPhysics/SingleTopNNLORef#Single_top_quark_tW_channel_cros
