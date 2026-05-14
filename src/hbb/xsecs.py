@@ -17,14 +17,14 @@ BR_HCC = 2.860e-02
 xsecs = {}
 
 # VBS Signal
-xsecs["VBS_SSWmWmToJets_5f_LO_5M"] = 0.1208
-xsecs["VBS_SSWpWpToJets_5f_LO_5M"] = 0.2944
-xsecs["VBS_OSWmWpTo4Q_5f_LO_5M"] = 1.109
+xsecs["VBS_SSWmWmToJets_5f_LO_5M"] = 0.1208*BR_WQQ*BR_WQQ
+xsecs["VBS_SSWpWpToJets_5f_LO_5M"] = 0.2944*BR_WQQ*BR_WQQ
+xsecs["VBS_OSWmWpTo4Q_5f_LO_5M"] = 1.109*BR_WQQ*BR_WQQ
 # xsecs["VBSZWmToJets_5f_LO_5M"] = 0.2857 # Jets to MET! also pick a better name
 # xsecs["VBSZWpToJets_5f_LO_5M"] = 0.4415 # Jets to MET!
-xsecs["VBSZWmTo4Jets_5f_LO"] = 0.2854
-xsecs["VBSZWpTo4Q_5f_LO"] = 0.4418
-xsecs["VBSZZToJets_5f_LO"] = 0.1771
+xsecs["VBSZWmTo4Jets_5f_LO"] = 0.2854*BR_WQQ*BR_ZQQ
+xsecs["VBSZWpTo4Q_5f_LO"] = 0.4418*BR_WQQ*BR_ZQQ
+xsecs["VBSZZToJets_5f_LO"] = 0.1771*BR_ZQQ*BR_ZQQ
 
 # Diboson
 xsecs["WW"] = 116.8 # 173.4 (116.8 at NNLO) 
