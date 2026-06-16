@@ -250,7 +250,7 @@ class categorizer(SkimmerABC):
 
         btag_SF = ak.ones_like(events.run)
         if not self._skip_syst:
-            add_pileup_weight(weights, self._year, events.Pileup.nPU)
+            add_pileup_weight(weights, self._year, events.Pileup.nTrueInt)
             add_ps_weight(weights, events.PSWeight)
             if not self._btag_eff:
                 btag_SF = add_btag_weights(
