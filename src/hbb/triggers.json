@@ -16,6 +16,20 @@
             "AK8PFJet425_SoftDropMass40"
         ],
     "2024": [
-            "AK8PFJet425_SoftDropMass30"
+            "PFHT1050",
+            "AK8PFJet275_Nch45", "AK8PFJet275_Nch40",
+            "AK8PFJet60", "AK8PFJet80",
+            "AK8PFJet140", "AK8PFJet200",
+            "AK8PFJet260", "AK8PFJet320",
+            "AK8PFJet400", "AK8PFJet450",
+            "AK8PFJet500", "AK8PFJet550",
+            "AK8PFJet230_SoftDropMass40", "AK8PFJet220_SoftDropMass40",
+            "AK8PFJet380_SoftDropMass30", "AK8PFJet400_SoftDropMass30",
+            "AK8PFJet425_SoftDropMass30", "AK8PFJet450_SoftDropMass30",
+            "AK8DiPFJet250_250_SoftDropMass40", "AK8DiPFJet250_250_SoftDropMass50",
+            "AK8DiPFJet260_260_SoftDropMass30", "AK8DiPFJet260_260_SoftDropMass40",
+            "AK8DiPFJet270_270_SoftDropMass30",
+            "AK8DiPFJet280_280_SoftDropMass30",
+            "AK8DiPFJet290_290_SoftDropMass30"
         ]
 }
