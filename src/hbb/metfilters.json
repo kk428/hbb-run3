@@ -81,8 +81,24 @@
     },
     "2024": {
         "data": [
+            "goodVertices",
+            "globalSuperTightHalo2016Filter",
+            "EcalDeadCellTriggerPrimitiveFilter",
+            "BadPFMuonFilter",
+            "BadPFMuonDzFilter",
+            "hfNoisyHitsFilter",
+            "eeBadScFilter",
+            "ecalBadCalibFilter"
         ],
         "mc": [
+            "goodVertices",
+            "globalSuperTightHalo2016Filter",
+            "EcalDeadCellTriggerPrimitiveFilter",
+            "BadPFMuonFilter",
+            "BadPFMuonDzFilter",
+            "hfNoisyHitsFilter",
+            "eeBadScFilter",
+            "ecalBadCalibFilter"
         ]
     }
 }

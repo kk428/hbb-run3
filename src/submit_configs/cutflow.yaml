@@ -1,0 +1,7 @@
+{
+  "2024": {
+    "VJets_had_LO": { "files_per_job": 5, },
+    "VJets_had_NLO": { "files_per_job": 5, },
+    "VBFWto2Q": { "files_per_job": 10, }
+  }
+}
