@@ -76,8 +76,8 @@ def main(args):
     year = args.year
     region = args.region
 
-    MAIN_DIR = "/eos/uscms/store/group/lpchbbrun3/"
-    dir_name = "gmachado/25Aug27_v12"
+    MAIN_DIR = "/eos/uscms/store/user/kakrzyza/"
+    dir_name = "061826-1_v15"
     path_to_dir = f"{MAIN_DIR}/{dir_name}/"
 
     load_columns_mc = [
@@ -164,7 +164,7 @@ if __name__ == "__main__":
         help="year",
         type=str,
         required=True,
-        choices=["2022", "2022EE", "2023", "2023BPix"],
+        choices=["2022", "2022EE", "2023", "2023BPix", "2024"],
     )
     parser.add_argument(
         "--region",
