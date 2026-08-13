@@ -431,7 +431,7 @@ class categorizer(SkimmerABC):
         selection.add("particleNetXbbpass", (candidatejet.particleNet_XbbVsQCD >= 0.5))
 
         # only consider 4 AK4 jets leading in pT to be consistent with old framework
-        jets = goodjets[:, :4]
+        jets = goodjets[:, :6]
         dphi = abs(jets.delta_phi(candidatejet))
         dR = jets.delta_r(candidatejet)
         ak4_opphem_ak8 = jets[dphi > np.pi / 2]
@@ -465,6 +465,8 @@ class categorizer(SkimmerABC):
         jet2_away = ak.firsts(ak4_outside_ak8[:, 1:2])
         jet3_away = ak.firsts(ak4_outside_ak8[:, 2:3])
         jet4_away = ak.firsts(ak4_outside_ak8[:, 3:4])
+        jet5_away = ak.firsts(ak4_outside_ak8[:, 4:5])
+        jet6_away = ak.firsts(ak4_outside_ak8[:, 5:6])
 
         vbf_deta = abs(jet1_away.eta - jet2_away.eta)
         vbf_mjj = (jet1_away + jet2_away).mass
@@ -564,6 +566,14 @@ class categorizer(SkimmerABC):
                 "Jet4_btagPNetCvB": jet4_away.btagPNetCvB,
                 "Jet4_btagPNetCvL": jet4_away.btagPNetCvL,
                 "Jet4_btagPNetQvG": jet4_away.btagPNetQvG,
+                "Jet4_pt": jet5_away.pt,
+                "Jet4_eta": jet5_away.eta,
+                "Jet4_phi": jet5_away.phi,
+                "Jet4_mass": jet5_away.mass,
+                "Jet5_pt": jet6_away.pt,
+                "Jet5_eta": jet6_away.eta,
+                "Jet5_phi": jet6_away.phi,
+                "Jet5_mass": jet6_away.mass,
                 "JetClosestFatJet0_pt": ak4_closest_ak8.pt,
                 "JetClosestFatJet0_eta": ak4_closest_ak8.eta,
                 "JetClosestFatJet0_phi": ak4_closest_ak8.phi,
