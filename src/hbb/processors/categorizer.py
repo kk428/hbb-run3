@@ -963,6 +963,13 @@ class categorizer(SkimmerABC):
                 cut = selection.all(*selections)
                 output["btagWeight"].fill(val=self.normalize(btag_SF, cut))
 
+                output_dir = "histograms"
+                output_dir.mkdir(parents=True, exist_ok=True)
+                output_file = output_dir / f"histograms_categorizer_{region}.pkl"
+
+                with output_file.open("wb") as f:
+                    pickle.dump(output["cutflow"], f)
+
         if self._save_skim:
             if shift_name == "nominal":
                 for region in regions:
