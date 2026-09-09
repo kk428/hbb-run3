@@ -62,7 +62,7 @@ def good_muons(muons: MuonArray, pt_type):
     # return muons[sel]
 
     # Temporarily disabled everything to make good cut flow histograms
-    return jets
+    return muons
 
 
 def good_electrons(electrons: ElectronArray):

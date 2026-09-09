@@ -305,7 +305,7 @@ class categorizer(SkimmerABC):
 
         dataset = events.metadata["dataset"]
         isRealData = not hasattr(events, "genWeight")
-        selection = PackedSelection()
+        selection = PackedSelection(dtype="uint64")
         output = self.make_output() if not self._btag_eff else self.make_btag_output()
         weights = Weights(None, storeIndividual=True)
         weights_mu = Weights(None, storeIndividual=True)
@@ -1081,7 +1081,7 @@ class categorizer(SkimmerABC):
                         if isRealData:
                             skim(region, ak.zip(output_array, depth_limit=1))
                         else:
-                            if "signal" in region:
+                            if "signal" in region or "cutflow" in region:
                                 skim(
                                     region, ak.zip({**output_array, **weights_dict}, depth_limit=1)
                                 )
@@ -1112,7 +1112,7 @@ class categorizer(SkimmerABC):
                         if isRealData:
                             skim(region, ak.zip(energy_var_array, depth_limit=1))
                         else:
-                            if "signal" in region:
+                            if "signal" in region or "cutflow" in region:
                                 skim(
                                     region,
                                     ak.zip({**energy_var_array, **weights_dict}, depth_limit=1),
