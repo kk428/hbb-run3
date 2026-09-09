@@ -34,9 +34,11 @@ def trig_match_sel(
 
 def good_photons(photons: PhotonArray):
 
-    sel = (photons.pt > 15) & (photons.isScEtaEB | photons.isScEtaEE) & (photons.mvaID_WP80)
+    # sel = (photons.pt > 15) & (photons.isScEtaEB | photons.isScEtaEE) & (photons.mvaID_WP80)
+    # return photons[sel]
 
-    return photons[sel]
+    # Temporarily disabled everything to make good cut flow histograms
+    return photons
 
 
 def tight_photons(photons: PhotonArray):
@@ -47,35 +49,41 @@ def tight_photons(photons: PhotonArray):
 
 
 def good_muons(muons: MuonArray, pt_type):
-    sel = (
-        (getattr(muons, pt_type) > 10)
-        & (np.abs(muons.eta) < 2.4)
-        & (muons.looseId)
-        & (muons.pfRelIso04_all < 0.15)
-        & (
-            ((abs(muons.eta) < 1.479) & (abs(muons.dz) < 0.1) & (abs(muons.dxy) < 0.05))
-            | ((abs(muons.eta) >= 1.479) & (abs(muons.dz) < 0.2) & (abs(muons.dxy) < 0.1))
-        )
-    )
-    return muons[sel]
+    # sel = (
+    #     (getattr(muons, pt_type) > 10)
+    #     & (np.abs(muons.eta) < 2.4)
+    #     & (muons.looseId)
+    #     & (muons.pfRelIso04_all < 0.15)
+    #     & (
+    #         ((abs(muons.eta) < 1.479) & (abs(muons.dz) < 0.1) & (abs(muons.dxy) < 0.05))
+    #         | ((abs(muons.eta) >= 1.479) & (abs(muons.dz) < 0.2) & (abs(muons.dxy) < 0.1))
+    #     )
+    # )
+    # return muons[sel]
+
+    # Temporarily disabled everything to make good cut flow histograms
+    return jets
 
 
 def good_electrons(electrons: ElectronArray):
-    sel = (
-        (electrons.pt > 10)
-        & (abs(electrons.eta) < 2.5)
-        & (electrons.pfRelIso03_all < 0.15)
-        & (electrons.mvaNoIso_WP90)
-        & (
-            ((abs(electrons.eta) < 1.479) & (abs(electrons.dz) < 0.1) & (abs(electrons.dxy) < 0.05))
-            | (
-                (abs(electrons.eta) >= 1.479)
-                & (abs(electrons.dz) < 0.2)
-                & (abs(electrons.dxy) < 0.1)
-            )
-        )
-    )
-    return electrons[sel]
+    # sel = (
+    #     (electrons.pt > 10)
+    #     & (abs(electrons.eta) < 2.5)
+    #     & (electrons.pfRelIso03_all < 0.15)
+    #     & (electrons.mvaNoIso_WP90)
+    #     & (
+    #         ((abs(electrons.eta) < 1.479) & (abs(electrons.dz) < 0.1) & (abs(electrons.dxy) < 0.05))
+    #         | (
+    #             (abs(electrons.eta) >= 1.479)
+    #             & (abs(electrons.dz) < 0.2)
+    #             & (abs(electrons.dxy) < 0.1)
+    #         )
+    #     )
+    # )
+    # return electrons[sel]
+
+    # Temporarily disabled everything to make good cut flow histograms
+    return electrons
 
 
 def set_ak4jets(jets: JetArray, isRealData: bool, year: str, nano_version: str, event_rho):
@@ -124,15 +132,18 @@ def good_ak4jets(jets: JetArray):
     # PuID might only be needed for forward region (WIP)
 
     # JETID: https://twiki.cern.ch/twiki/bin/viewauth/CMS/JetID13p6TeV
-    sel = (
-        (jets.pt > 30)
-        & (jets.jetidtight)
-        & (jets.jetidtightlepveto)
-        & (abs(jets.eta) < 5.0)
-        & ~((jets.pt <= 50) & (abs(jets.eta) > 2.5) & (abs(jets.eta) < 3.0))
-    )
+    # sel = (
+    #     (jets.pt > 30)
+    #     & (jets.jetidtight)
+    #     & (jets.jetidtightlepveto)
+    #     & (abs(jets.eta) < 5.0)
+    #     & ~((jets.pt <= 50) & (abs(jets.eta) > 2.5) & (abs(jets.eta) < 3.0))
+    # )
 
-    return jets[sel]
+    # return jets[sel]
+
+    # Temporarily disabled everything to make good cut flow histograms
+    return jets
 
 
 def set_ak8jets(fatjets: FatJetArray, isRealData: bool, year: str, nano_version: str, event_rho):
@@ -184,5 +195,8 @@ def set_ak8jets(fatjets: FatJetArray, isRealData: bool, year: str, nano_version:
 
 # ak8 jet definition
 def good_ak8jets(fatjets: FatJetArray):
-    sel = fatjets.jetidtight & (fatjets.pt > 200) & (abs(fatjets.eta) < 2.5)
-    return fatjets[sel]
+    # sel = fatjets.jetidtight & (fatjets.pt > 200) & (abs(fatjets.eta) < 2.5)
+    # return fatjets[sel]
+
+    # Temporarily disabled everything to make good cut flow histograms
+    return fatjets

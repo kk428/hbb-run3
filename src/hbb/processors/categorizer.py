@@ -201,7 +201,7 @@ class categorizer(SkimmerABC):
             "sumw": {},
             "cutflow": Hist.new.StrCat([], growth=True, name="region", label="Region")
             .StrCat([], growth=True, name="dataset", label="Dataset")
-            .Reg(15, 0, 15, name="cut", label="Cut index")
+            .Reg(32, 0, 32, name="cut", label="Cut index")
             .Variable([0, 1, 2, 3, 4], name="genflavor", label="Gen. jet flavor")
             .Weight(),
             "btagWeight": Hist.new.Reg(50, 0, 3, name="val", label="BTag correction").Weight(),
@@ -346,6 +346,39 @@ class categorizer(SkimmerABC):
         selection.add("metfilter", metfilter)
         del metfilter
 
+        # --- raw NanoAOD-level preselection cuts (target cutflow table, rows 3-8) ---
+        # Built directly off unfiltered NanoAOD branches to match the table's literal
+        # Muon_/Electron_/Tau_/Jet_/FatJet_/SubJet_ definitions, since good_muons/
+        # good_electrons/good_ak4jets/good_ak8jets apply different criteria (or are
+        # disabled entirely, per the assumption this cutflow is implemented under).
+        tight_muons = events.Muon[
+            (events.Muon.tightId >= 1) & (events.Muon.pt > 25) & (abs(events.Muon.eta) < 2.4)
+        ]
+        selection.add("no_tight_muons", ak.num(tight_muons, axis=1) == 0)
+
+        tight_electrons = events.Electron[
+            (events.Electron.pt > 35)
+            & (abs(events.Electron.eta) < 2.5)
+            & (events.Electron.mvaIso_WP80 >= 1)
+        ]
+        selection.add("no_tight_electrons", ak.num(tight_electrons, axis=1) == 0)
+
+        veto_taus = events.Tau[(events.Tau.pt > 18) & (abs(events.Tau.eta) < 2.3)]
+        selection.add("no_taus", ak.num(veto_taus, axis=1) == 0)
+
+        cutflow_jets50 = events.Jet[(events.Jet.pt > 50) & (abs(events.Jet.eta) < 5.131)]
+        selection.add("atleast2jets50", ak.num(cutflow_jets50, axis=1) >= 2)
+
+        cutflow_subjets12 = events.SubJet[
+            (events.SubJet.pt > 12) & (abs(events.SubJet.eta) < 5.131)
+        ]
+        selection.add("atleast1subjet", ak.num(cutflow_subjets12, axis=1) >= 1)
+
+        cutflow_fatjets50 = events.FatJet[
+            (events.FatJet.pt > 50) & (abs(events.FatJet.eta) < 2.5)
+        ]
+        selection.add("atleast1fatjet50", ak.num(cutflow_fatjets50, axis=1) >= 1)
+
         mc_run = "mc"
         if isRealData:
             for keys, value in run_map.items():
@@ -479,6 +512,45 @@ class categorizer(SkimmerABC):
 
         selection.add("isvbf", isvbf)
         selection.add("notvbf", isnotvbf)
+
+        # cutflow stages (target cutflow table, rows 9-29). candidatejet/subleadingjet/
+        # ak4_outside_ak8 are only unfiltered raw-collection objects once good_ak8jets/
+        # good_ak4jets are disabled -- with them active these cuts are largely no-ops.
+        selection.add("lead_pt200", ak.fill_none(candidatejet.pt >= 200, False))
+        selection.add("trail_pt0", ak.fill_none(subleadingjet.pt >= 0, False))
+        selection.add("puppimet250", met.pt < 250.0)
+        selection.add("has_fatjet", ak.num(goodfatjets, axis=1) >= 1)
+        selection.add("lead_eta2p5", ak.fill_none(abs(candidatejet.eta) < 2.5, False))
+        selection.add("lead_pt300", ak.fill_none(candidatejet.pt > 300, False))
+
+        if "v12" in self._nano_version:
+            wtag_pass = ak.fill_none(candidatejet.particleNet_WvsQCD > 0.75, False)
+        else:
+            w_vs_qcd = (candidatejet.globalParT3_Xcs + (1.0/3.0)*candidatejet.globalParT3_Xqq)/(candidatejet.globalParT3_Xcs + (1.0/3.0)*candidatejet.globalParT3_Xqq + candidatejet.globalParT3_QCD)
+            wtag_pass = ak.fill_none(w_vs_qcd > 0.75, False)
+        selection.add("wtag075", wtag_pass)
+
+        selection.add(
+            "W_mass_window",
+            ak.fill_none((candidatejet.msd > 65) & (candidatejet.msd < 105), False),
+        )
+        selection.add("sub_pt300", ak.fill_none(subleadingjet.pt < 300, False))
+        selection.add("sub_eta2p5", ak.fill_none(abs(subleadingjet.eta) < 2.5, False))
+        selection.add("sub_msd0", ak.fill_none(subleadingjet.msd > 0, False))
+        selection.add("sub_msd9999", ak.fill_none(subleadingjet.msd < 9999, False))
+
+        away_btag_scores = getattr(ak4_outside_ak8, self._btagger)
+        n_away_btagged = ak.sum(away_btag_scores > self._btag_cut, axis=1)
+        n_away_nonbtagged = ak.sum(away_btag_scores <= self._btag_cut, axis=1)
+        selection.add("zero_btagged", n_away_btagged == 0)
+        selection.add("atleast2_nonbtagged", n_away_nonbtagged >= 2)
+        selection.add("atleast2_tagjets", ak.num(ak4_outside_ak8, axis=1) >= 2)
+
+        selection.add(
+            "opp_hemi", ak.fill_none(jet1_away.eta * jet2_away.eta < 0, False)
+        )
+        selection.add("deta_2p5", vbf_deta > 2.5)
+        selection.add("mjj_500", vbf_mjj > 500)
 
         muons = correct_muons(events.Muon, events, self._year, isRealData)
         if shift_name != "nominal" and "Muon" in shift_name:
@@ -637,6 +709,43 @@ class categorizer(SkimmerABC):
                 # "antiak4btagMediumOppHem",
                 # "lowmet",
                 # "noleptons",
+            ],
+            "cutflow-resolved": [
+                # rows 1-2
+                "trigger",
+                "metfilter",
+                # rows 3-8
+                "no_tight_muons",
+                "no_tight_electrons",
+                "no_taus",
+                "atleast2jets50",
+                "atleast1subjet",
+                "atleast1fatjet50",
+                # rows 9-12
+                "lead_pt200",
+                "trail_pt0",
+                "puppimet250",
+                "has_fatjet",
+                # rows 13-18 (13/16/19 repeat earlier cuts, per the table)
+                "lead_pt200",
+                "lead_eta2p5",
+                "lead_pt300",
+                "lead_eta2p5",
+                "wtag075",
+                "W_mass_window",
+                # rows 19-23
+                "trail_pt0",
+                "sub_pt300",
+                "sub_eta2p5",
+                "sub_msd0",
+                "sub_msd9999",
+                # rows 24-29
+                "zero_btagged",
+                "atleast2_nonbtagged",
+                "atleast2_tagjets",
+                "opp_hemi",
+                "deta_2p5",
+                "mjj_500",
             ],
             # "signal-ggf": [
             #     "trigger",
@@ -962,13 +1071,6 @@ class categorizer(SkimmerABC):
                 # Fill btag SF hist
                 cut = selection.all(*selections)
                 output["btagWeight"].fill(val=self.normalize(btag_SF, cut))
-
-                output_dir = "histograms"
-                output_dir.mkdir(parents=True, exist_ok=True)
-                output_file = output_dir / f"histograms_categorizer_{region}.pkl"
-
-                with output_file.open("wb") as f:
-                    pickle.dump(output["cutflow"], f)
 
         if self._save_skim:
             if shift_name == "nominal":
