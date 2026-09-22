@@ -35,8 +35,8 @@ def run(year: str, fileset: dict, args: argparse.Namespace):
 
     # if the fileset is empty, use dummy file to check if the processor works
     if not fileset:
-        dataset = "GluGlu_Hto2B"
-        fname = "root://cmsxrootd.fnal.gov//store/mc/Run3Summer22NanoAODv12/GluGluHto2B_PT-200_M-125_TuneCP5_13p6TeV_powheg-minlo-pythia8/NANOAODSIM/130X_mcRun3_2022_realistic_v5-v2/50000/3a484476-0efd-469c-b376-c09628e3d380.root"
+	    dataset = "JetMET_2024H-test"
+	    fname = "root://cmsdcadisk.fnal.gov//dcache/uscmsdisk/store/data/Run2024H/JetMET0/NANOAOD/MINIv6NANOv15-v2/2520000/112f8743-d7cc-4257-9544-057b7fc1db43.root"
         dict_process_files = {
             dataset: {
                 "files": {fname: "Events"},

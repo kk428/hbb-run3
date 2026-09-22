@@ -346,11 +346,7 @@ class categorizer(SkimmerABC):
         selection.add("metfilter", metfilter)
         del metfilter
 
-        # --- raw NanoAOD-level preselection cuts (target cutflow table, rows 3-8) ---
-        # Built directly off unfiltered NanoAOD branches to match the table's literal
-        # Muon_/Electron_/Tau_/Jet_/FatJet_/SubJet_ definitions, since good_muons/
-        # good_electrons/good_ak4jets/good_ak8jets apply different criteria (or are
-        # disabled entirely, per the assumption this cutflow is implemented under).
+        # cutflow preselection
         tight_muons = events.Muon[
             (events.Muon.tightId >= 1) & (events.Muon.pt > 25) & (abs(events.Muon.eta) < 2.4)
         ]
@@ -513,9 +509,7 @@ class categorizer(SkimmerABC):
         selection.add("isvbf", isvbf)
         selection.add("notvbf", isnotvbf)
 
-        # cutflow stages (target cutflow table, rows 9-29). candidatejet/subleadingjet/
-        # ak4_outside_ak8 are only unfiltered raw-collection objects once good_ak8jets/
-        # good_ak4jets are disabled -- with them active these cuts are largely no-ops.
+        # more cutflow stages
         selection.add("lead_pt200", ak.fill_none(candidatejet.pt >= 200, False))
         selection.add("trail_pt0", ak.fill_none(subleadingjet.pt >= 0, False))
         selection.add("puppimet250", met.pt < 250.0)
@@ -715,7 +709,7 @@ class categorizer(SkimmerABC):
                 "trigger",
                 "metfilter",
                 # rows 3-8
-                "no_tight_muons",
+                "no_tight_muons",   # check the leptons
                 "no_tight_electrons",
                 "no_taus",
                 "atleast2jets50",
@@ -726,12 +720,12 @@ class categorizer(SkimmerABC):
                 "trail_pt0",
                 "puppimet250",
                 "has_fatjet",
-                # rows 13-18 (13/16/19 repeat earlier cuts, per the table)
+                # rows 13-18
                 "lead_pt200",
                 "lead_eta2p5",
                 "lead_pt300",
                 "lead_eta2p5",
-                "wtag075",
+                "wtag075",   # ask Nico maybe
                 "W_mass_window",
                 # rows 19-23
                 "trail_pt0",
