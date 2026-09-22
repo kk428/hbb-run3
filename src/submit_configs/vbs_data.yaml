@@ -1,5 +1,5 @@
 {  
   "2024": {
-    "JetMET": { "files_per_job": 8, }
+    "JetMET": { "files_per_job": 1, }
   }
 }
