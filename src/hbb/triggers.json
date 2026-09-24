@@ -16,22 +16,6 @@
             "AK8PFJet425_SoftDropMass40"
         ],
     "2024": [
-        "PFMET120_PFMHT120_IDTight",
-        "PFMET120_PFMHT120_IDTight_PFHT60", 
-        "PFMET130_PFMHT130_IDTight",
-        "PFMET140_PFMHT140_IDTight", 
-        "PFMETNoMu110_PFMHTNoMu110_IDTight_FilterHF",
-        "PFMETNoMu120_PFMHTNoMu120_IDTight", 
-        "PFMETNoMu120_PFMHTNoMu120_IDTight_PFHT60",
-        "PFMETNoMu130_PFMHTNoMu130_IDTight", 
-        "PFMETNoMu130_PFMHTNoMu130_IDTight_FilterHF",
-        "PFMETNoMu140_PFMHTNoMu140_IDTight", 
-        "PFMETNoMu140_PFMHTNoMu140_IDTight_FilterHF",
-        "VBF_DiPFJet125_45_Mjj1050", 
-        "VBF_DiPFJet125_45_Mjj1200",
-        "VBF_DiPFJet75_45_Mjj800_DiPFJet60", 
-        "VBF_DiPFJet75_45_Mjj850_DiPFJet60",
-        "VBF_DiPFJet80_45_Mjj650_PFMETNoMu85", 
-        "VBF_DiPFJet80_45_Mjj750_PFMETNoMu85"
+        "PFMETNoMu120_PFMHTNoMu120_IDTight"
         ]
 }

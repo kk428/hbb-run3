@@ -116,6 +116,17 @@ REGION_CUTS = {
 }
 
 
+# "Pass" column of the reference cutflow table, by cut index (index 0 = the table's
+# first-row "All", i.e. the no-cuts baseline).
+REFERENCE_PASS = {
+    "cutflow-v2": [
+        749384, 749384, 201069, 200749, 200683, 200683, 200665, 200603, 194041, 190355,
+        190282, 184881, 183445, 177940, 130387, 1746, 707, 707, 565, 433,
+        315, 315, 315, 181, 71, 64,
+    ],
+}
+
+
 def cut_name(region, cut_index):
     if cut_index == 0:
         return "(none -- baseline)"
@@ -165,6 +176,19 @@ def print_region_table(cutflow, region, dataset, max_cuts):
         rows.append([i, cut_name(region, i), f"{values[i]:.2f}", f"{errors[i]:.2f}", eff, cumeff])
 
     print(f"\nRegion: {region}  |  Dataset: {dataset}")
+    print(format_table(headers, rows))
+
+
+def print_reference_comparison(cutflow, region, dataset):
+    values = cutflow[{"region": region, "dataset": dataset}][{"genflavor": sum}].values()
+    reference = REFERENCE_PASS[region]
+
+    headers = ["cut", "name", "events", "reference events"]
+    rows = [
+        [i, cut_name(region, i), f"{values[i]:.2f}", reference[i]] for i in range(len(reference))
+    ]
+
+    print(f"\nReference comparison -- Region: {region}  |  Dataset: {dataset}")
     print(format_table(headers, rows))
 
 
@@ -245,6 +269,11 @@ def main(args):
     for region in regions:
         for dataset in datasets:
             print_region_table(cutflow, region, dataset, args.max_cuts)
+
+    for region in regions:
+        if region in REFERENCE_PASS:
+            for dataset in datasets:
+                print_reference_comparison(cutflow, region, dataset)
 
 
 if __name__ == "__main__":
