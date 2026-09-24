@@ -53,6 +53,33 @@ REGION_CUTS = {
         "deta_2p5",
         "mjj_500",
     ],
+    "cutflow-v2": [
+        "lumimask",
+        "trigger",
+        "flag_EcalDeadCellTriggerPrimitiveFilter",
+        "flag_BadPFMuonFilter",
+        "flag_eeBadScFilter",
+        "flag_BadPFMuonDzFilter",
+        "flag_goodVertices",
+        "flag_hfNoisyHitsFilter",
+        "flag_globalSuperTightHalo2016Filter",
+        "flag_ecalBadCalibFilter",
+        "no_loose_muons",
+        "no_loose_electrons",
+        "no_taus_v2",
+        "fatjet_pt200_raw",
+        "puppimet_ge250",
+        "tagjetpair_loose",
+        "puppimet_ge250",
+        "wtag_lead_pt250",
+        "wtag_lead_eta2p5",
+        "wtag_dphi_met",
+        "btagpass_ge0",
+        "btagfail_ge0",
+        "atleast2_final_tagjets",
+        "finaltagjet_deta2p5",
+        "finaltagjet_mjj500",
+    ],
     "signal-ggf-BDT": [
         "trigger",
         "lumimask",
@@ -112,6 +139,10 @@ def format_table(headers, rows):
     return "\n".join(lines)
 
 
+def pct(numer, denom):
+    return f"{100 * numer / denom:.2f}" if denom else "-"
+
+
 def print_region_table(cutflow, region, dataset, max_cuts):
     h = cutflow[{"region": region, "dataset": dataset}][{"genflavor": sum}]
     values = h.values()
@@ -125,10 +156,13 @@ def print_region_table(cutflow, region, dataset, max_cuts):
             last_nonzero = i
     ncuts = min(max_cuts, last_nonzero + 1) if max_cuts is not None else last_nonzero + 1
 
-    headers = ["cut", "name", "events", "+/- stat"]
-    rows = [
-        [i, cut_name(region, i), f"{values[i]:.2f}", f"{errors[i]:.2f}"] for i in range(ncuts)
-    ]
+    total = values[0]
+    headers = ["cut", "name", "events", "+/- stat", "eff %", "cumeff %"]
+    rows = []
+    for i in range(ncuts):
+        eff = pct(values[i], values[i - 1]) if i > 0 else "-"
+        cumeff = pct(values[i], total)
+        rows.append([i, cut_name(region, i), f"{values[i]:.2f}", f"{errors[i]:.2f}", eff, cumeff])
 
     print(f"\nRegion: {region}  |  Dataset: {dataset}")
     print(format_table(headers, rows))
