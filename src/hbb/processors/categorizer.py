@@ -422,14 +422,14 @@ class categorizer(SkimmerABC):
         selection.add("ak4jetveto", cut_jetveto)
 
         # get_jetveto_event hardcodes pT > 15 and tight-lepveto jet ID, so pre-filter to
-        # pT > 50 and override the ID field to True so only the pT and map conditions apply.
-        jets_pt50 = jets[jets.pt > 50.0]
+        # pT > 15 and override the ID field to True so only the pT and map conditions apply.
+        jets_pt50 = jets[jets.pt > 15.0]
         jets_pt50 = ak.with_field(
             jets_pt50,
             ak.values_astype(ak.ones_like(jets_pt50.pt), bool),
             "jetidtightlepveto",
         )
-        selection.add("jetveto_pt50", get_jetveto_event(jets_pt50, self._year))
+        selection.add("jetveto_pt15", get_jetveto_event(jets_pt50, self._year))
 
         if "v12" in self._nano_version:
             xbbfatjets = goodfatjets[ak.argsort(goodfatjets.pnetXbbXcc, axis=1, ascending=False)]
