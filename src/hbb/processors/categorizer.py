@@ -429,7 +429,7 @@ class categorizer(SkimmerABC):
             ak.values_astype(ak.ones_like(jets_pt50.pt), bool),
             "jetidtightlepveto",
         )
-        selection.add("jetveto_pt15", get_jetveto_event(jets_pt50, self._year))
+        selection.add("jetveto_pt50", get_jetveto_event(jets_pt50, self._year))
 
         if "v12" in self._nano_version:
             xbbfatjets = goodfatjets[ak.argsort(goodfatjets.pnetXbbXcc, axis=1, ascending=False)]
