@@ -55,6 +55,7 @@ REGION_CUTS = {
     ],
     "cutflow-v2": [
         "lumimask",
+        "jetveto_pt50",
         "trigger",
         "flag_EcalDeadCellTriggerPrimitiveFilter",
         "flag_BadPFMuonFilter",
@@ -117,12 +118,33 @@ REGION_CUTS = {
 
 
 # "Pass" column of the reference cutflow table, by cut index (index 0 = the table's
-# first-row "All", i.e. the no-cuts baseline).
+# first-row "All", i.e. the no-cuts baseline). None = no reference number for that row.
 REFERENCE_PASS = {
     "cutflow-v2": [
-        749384, 749384, 201069, 200749, 200683, 200683, 200665, 200603, 194041, 190355,
-        190282, 184881, 183445, 177940, 130387, 1746, 707, 707, 565, 433,
-        315, 315, 315, 181, 71, 64,
+        749384,  # baseline
+        749384,  # Passes luminosity json
+        690109,  # Jet veto map: no Jet with pT > 50.0 GeV in a veto region
+        93206,  # Trigger filter
+        89810,  # Flag_globalSuperTightHalo2016Filter
+        89756,  # Flag_goodVertices
+        89714,  # Flag_BadPFMuonDzFilter
+        83444,  # Flag_hfNoisyHitsFilter
+        83444,  # Flag_BadPFMuonFilter
+        83339,  # Flag_EcalDeadCellTriggerPrimitiveFilter
+        83302,  # Flag_ecalBadCalibFilter
+        83302,  # Flag_eeBadScFilter
+        78772,  # No loose muons
+        77708,  # No loose electrons
+        74937,  # No taus
+        18876,  # At least 250.0 pT leading fatjet
+        1079,  # Minimum PuppiMET_pt of 250.0
+        278,  # Tag-jet pair |deta| >= 2.5, mjj >= 500 (Jet_pt > 30, |eta| < 4.7)
+        278,  # Minimum PuppiMET_pt of 250.0 GeV (repeat)
+        253,  # Leading fatjet pt >= 250 (globalParT3_withMassWvsQCD sorted)
+        152,  # Leading fatjet |eta| < 2.5
+        117,  # Delta phi(leading fatjet, PuppiMET) > 0.8
+        41,  # nJetBTagPass == 0 (L WP)
+        33,  # nJetBTagFail >= 2
     ],
 }
 
@@ -185,7 +207,8 @@ def print_reference_comparison(cutflow, region, dataset):
 
     headers = ["cut", "name", "events", "reference events"]
     rows = [
-        [i, cut_name(region, i), f"{values[i]:.2f}", reference[i]] for i in range(len(reference))
+        [i, cut_name(region, i), f"{values[i]:.2f}", "-" if reference[i] is None else reference[i]]
+        for i in range(len(reference))
     ]
 
     print(f"\nReference comparison -- Region: {region}  |  Dataset: {dataset}")
