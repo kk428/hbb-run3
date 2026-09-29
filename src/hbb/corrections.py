@@ -250,7 +250,9 @@ def get_jetveto_event(jets: JetArray, year: str):
 
     jet_veto = get_veto(j, nj, corr_str) > 0
 
-    event_sel = ~(ak.any((jets.pt > 15) & (jets.jetidtightlepveto) & jet_veto, axis=1))
+    emEnergyFraction = jets.chargedEmEnergyFraction + jets.neutralEmEnergyFraction
+
+    event_sel = ~(ak.any((jets.pt > 15) & (jets.jetidtightlepveto) & (emEnergyFraction < 0.9) & jet_veto, axis=1))
     return event_sel
 
 def correct_jetid(jets, jet_type: str, year: str):
