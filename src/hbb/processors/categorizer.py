@@ -333,11 +333,7 @@ class categorizer(SkimmerABC):
         selection.add("metfilter", metfilter)
         del metfilter
 
-        # --- raw NanoAOD-level preselection cuts (target cutflow table, rows 3-8) ---
-        # Built directly off unfiltered NanoAOD branches to match the table's literal
-        # Muon_/Electron_/Tau_/Jet_/FatJet_/SubJet_ definitions, since good_muons/
-        # good_electrons/good_ak4jets/good_ak8jets apply different criteria (or are
-        # disabled entirely, per the assumption this cutflow is implemented under).
+        # raw NanoAOD-level preselection cuts
         tight_muons = events.Muon[
             (events.Muon.tightId >= 1) & (events.Muon.pt > 25) & (abs(events.Muon.eta) < 2.4)
         ]
@@ -423,7 +419,7 @@ class categorizer(SkimmerABC):
 
         # get_jetveto_event hardcodes pT > 15 and tight-lepveto jet ID, so pre-filter to
         # pT > 15 and override the ID field to True so only the pT and map conditions apply.
-        jets_pt50 = jets[jets.pt > 0.0]
+        jets_pt50 = jets[jets.pt > 0.0]  # temporarily set to 0 for testing
         jets_pt50 = ak.with_field(
             jets_pt50,
             ak.values_astype(ak.ones_like(jets_pt50.pt), bool),
@@ -478,9 +474,7 @@ class categorizer(SkimmerABC):
         vbf_deta = ak.fill_none(vbf_deta, -1)
         vbf_mjj = ak.fill_none(vbf_mjj, -1)
 
-        # cutflow stages (target cutflow table, rows 9-29). candidatejet/subleadingjet/
-        # ak4_outside_ak8 are only unfiltered raw-collection objects once good_ak8jets/
-        # good_ak4jets are disabled -- with them active these cuts are largely no-ops.
+        # cutflow stages
         selection.add("lead_pt200", ak.fill_none(candidatejet.pt >= 200, False))
         selection.add("trail_pt0", ak.fill_none(subleadingjet.pt >= 0, False))
         selection.add("puppimet250", met.pt < 250.0)
@@ -517,11 +511,7 @@ class categorizer(SkimmerABC):
         selection.add("deta_2p5", vbf_deta > 2.5)
         selection.add("mjj_500", vbf_mjj > 500)
 
-        # --- second cutflow table ("cutflow-v2" region below). Different structure
-        # from cutflow-resolved: individual MET-filter flags, looser lepton/tau vetoes,
-        # a genuine minimum-MET (not maximum) requirement, real dijet-pair combinatorics
-        # for the VBF tag jets, and a W-tagger-sorted (not Xbb-sorted) leading fatjet
-        # candidate `wtag_candidatejet`, kept separate from `candidatejet` used elsewhere.
+        # cutflow-v2 region
         individual_flags = [
             "EcalDeadCellTriggerPrimitiveFilter",
             "BadPFMuonFilter",
@@ -566,14 +556,9 @@ class categorizer(SkimmerABC):
 
         selection.add("fatjet_pt200_raw", ak.max(fatjets.pt, axis=1, mask_identity=False) >= 200)
 
-        # "Minimum PuppiMET_pt of 250.0" is a LOWER bound -- opposite sense from the
-        # existing `puppimet250` (met.pt < 250) used by cutflow-resolved, hence the
-        # distinct name, so that region's meaning isn't silently changed.
         selection.add("puppimet_ge250", met.pt >= 250.0)
 
-        # loose VBF-like tag-jet pair: pt>30, |eta|<4.7, best (max-mjj) pair among them.
-        # The table doesn't define "best" -- max-mjj is the standard convention in
-        # CMS VBF-tagged analyses, so that's the assumption here.
+        # loose VBF-like tag-jet pair: pt>30, |eta|<4.7, best (max-mjj) pair among them
         vbf_jets = events.Jet[(events.Jet.pt > 30) & (abs(events.Jet.eta) < 4.7)]
         vbf_pairs = ak.combinations(vbf_jets, 2, fields=["j1", "j2"])
         vbf_pair_deta = abs(vbf_pairs.j1.eta - vbf_pairs.j2.eta)
@@ -583,15 +568,13 @@ class categorizer(SkimmerABC):
         vbf_best_mjj = ak.fill_none(ak.firsts(vbf_pair_mjj[vbf_best_idx]), -1)
         selection.add("tagjetpair_loose", (vbf_best_deta >= 2.0) & (vbf_best_mjj >= 300.0))
 
-        # b-tag counts at the loose (L) working point. The table doesn't name a jet
-        # collection for these two rows -- reusing vbf_jets, the most recently defined
-        # jet collection at that point in the table, as the base collection.
+        # b-tag counts at the loose (L) working point
         n_btag_pass_L = ak.sum(getattr(vbf_jets, self._btagger) > self._btag_cut_L, axis=1)
         n_btag_fail_L = ak.sum(getattr(vbf_jets, self._btagger) <= self._btag_cut_L, axis=1)
         selection.add("btagpass_ge0", n_btag_pass_L >= 0)  # always true, matches table
         selection.add("btagfail_ge0", n_btag_fail_L >= 0)  # always true, matches table
 
-        # leading fatjet candidate for THIS table, sorted by the W-tagger score --
+        # leading fatjet candidate sorted by the W-tagger score,
         # NOT the Xbb-sorted `candidatejet` used by the rest of this file.
         if "v12" in self._nano_version:
             wtag_sort_score = fatjets.particleNet_WvsQCD
@@ -774,35 +757,29 @@ class categorizer(SkimmerABC):
                 # "noleptons",
             ],
             "cutflow-resolved": [
-                # rows 1-2
                 "trigger",
                 "metfilter",
-                # rows 3-8
                 "no_tight_muons",
                 "no_tight_electrons",
                 "no_taus",
                 "atleast2jets50",
                 "atleast1subjet",
                 "atleast1fatjet50",
-                # rows 9-12
                 "lead_pt200",
                 "trail_pt0",
                 "puppimet250",
                 "has_fatjet",
-                # rows 13-18 (13/16/19 repeat earlier cuts, per the table)
                 "lead_pt200",
                 "lead_eta2p5",
                 "lead_pt300",
                 "lead_eta2p5",
                 "wtag075",
                 "W_mass_window",
-                # rows 19-23
                 "trail_pt0",
                 "sub_pt300",
                 "sub_eta2p5",
                 "sub_msd0",
                 "sub_msd9999",
-                # rows 24-29
                 "zero_btagged",
                 "atleast2_nonbtagged",
                 "atleast2_tagjets",
