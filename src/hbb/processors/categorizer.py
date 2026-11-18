@@ -401,7 +401,7 @@ class categorizer(SkimmerABC):
         cut_jetveto = get_jetveto_event(jets, self._year)
         selection.add("ak4jetveto", cut_jetveto)
 
-        selection.add("1FJ", ak.num(goodfatjets, axis=1) = 1)
+        selection.add("1FJ", ak.num(goodfatjets, axis=1) == 1)
         selection.add("2FJ", ak.num(goodfatjets, axis=1) == 2)
         selection.add("not2FJ", ak.num(goodfatjets, axis=1) != 2)
 
