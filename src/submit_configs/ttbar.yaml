@@ -1,0 +1,6 @@
+{
+  "2024": {
+    "JetMET": { "files_per_job": 8, },
+    "Muon": { "files_per_job": 6, }
+    }
+}
