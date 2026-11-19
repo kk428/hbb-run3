@@ -494,6 +494,7 @@ class categorizer(SkimmerABC):
         nelectrons = ak.num(goodelectron, axis=1)
 
         selection.add("noleptons", (nmuons == 0) & (nelectrons == 0))
+        selection.add("noelectrons", (nelectrons == 0))
         selection.add("onemuon", (nmuons == 1) & (nelectrons == 0))
         selection.add(
             "muonkin", (getattr(leadingmuon, self._mupt_type) > 55.0) & (abs(leadingmuon.eta) < 2.1)
@@ -622,14 +623,14 @@ class categorizer(SkimmerABC):
             "ttbar": [
                 "muontrigger",
                 "lumimask",
-                "noleptons",
+                "noelectrons",
                 "onemuon",
                 "1FJ"
             ],
             "ttbar-extra": [
                 "muontrigger",
                 "lumimask",
-                "noleptons",
+                "noelectrons",
                 "onemuon",
                 "1FJ",
                 "muonkin",
