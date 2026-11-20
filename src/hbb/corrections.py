@@ -309,6 +309,10 @@ jec_name_map = {
 def apply_jerc(jets, jet_type: str, year: str, runkey: str):
     #Create CorrectedJetFactory and apply jercs+variations to JetArray or FatJetArray
 
+    # Handle empty jet arrays - return unchanged to avoid IndexError in CorrectedJetsFactory
+    if ak.num(jets, axis=1) == 0:
+        return jets
+
     jerc_path =f"{package_path}/hbb/data/jerc"
     jec_path = f"{jerc_path}/{jec_eras[runkey]}"
 
