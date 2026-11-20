@@ -1,0 +1,12 @@
+{
+  "2024": {
+    "Hbb": { "subsamples": [
+      "ttHto2B_M-125",
+    ], "files_per_job": 15, },
+    "Hcc": { "subsamples": [
+      "ttHto2C_M-125",
+    ], "files_per_job": 15, },
+    "QCD": { "files_per_job": 5, },
+    "TT": { "files_per_job": 8, },
+  },
+}

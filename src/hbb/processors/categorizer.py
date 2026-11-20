@@ -985,6 +985,16 @@ class categorizer(SkimmerABC):
                                 skim(
                                     region, ak.zip({**output_array, **weights_dict}, depth_limit=1)
                                 )
+                            elif region == "ttbar" or region == "ttbar-extra":
+                                output_array["weight"] = (
+                                    ak.ones_like(events.run)
+                                    if isRealData
+                                    else weights_dict["weight"]
+                                )
+                                skim(
+                                    region,
+                                    ak.zip({**output_array, **weights_dict}, depth_limit=1),
+                                )
                             elif region == "control-tt":
                                 output_array["weight"] = (
                                     ak.ones_like(events.run)
@@ -1013,6 +1023,16 @@ class categorizer(SkimmerABC):
                             skim(region, ak.zip(energy_var_array, depth_limit=1))
                         else:
                             if "signal" in region:
+                                skim(
+                                    region,
+                                    ak.zip({**energy_var_array, **weights_dict}, depth_limit=1),
+                                )
+                            elif region == "ttbar" or region == "ttbar-extra":
+                                output_array["weight"] = (
+                                    ak.ones_like(events.run)
+                                    if isRealData
+                                    else weights_dict["weight"]
+                                )
                                 skim(
                                     region,
                                     ak.zip({**energy_var_array, **weights_dict}, depth_limit=1),
