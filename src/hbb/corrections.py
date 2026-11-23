@@ -27,6 +27,36 @@ from hbb.MuonScaRe import pt_resol, pt_scale, pt_resol_var, pt_scale_var
 from hbb.jerc_eras import jec_eras,jer_eras, jec_mc, jer_mc, jec_data, fatjet_jerc_keys, jet_jerc_keys
 from hbb.taggers import b_taggers
 
+# Correcting a bug regarding empty partitions
+import importlib
+_cjf = importlib.import_module("coffea.jetmet_tools.CorrectedJetsFactory")
+
+def _rand_gauss_fixed(item):
+    # Backport of coffea's upstream fix: safe on partitions with zero jets
+    np_item = ak.typetracer.length_one_if_typetracer(item).to_numpy()
+    seeds = np_item[[0, -1]].view("i4") if len(np_item) else np.zeros(2, dtype=np.int32)
+    randomstate = np.random.Generator(np.random.PCG64(seeds))
+
+    def getfunction(layout, depth, **kwargs):
+        if isinstance(layout, ak.contents.NumpyArray) or not isinstance(
+            layout, (ak.contents.Content,)
+        ):
+            return ak.contents.NumpyArray(
+                randomstate.normal(size=len(layout)).astype(np.float32)
+            )
+        return None
+
+    out = ak.transform(
+        getfunction,
+        ak.typetracer.length_zero_if_typetracer(item),
+        behavior=item.behavior,
+    )
+    if ak.backend(item) == "typetracer":
+        out = ak.Array(out.layout.to_typetracer(forget_length=True), behavior=out.behavior)
+    return out
+
+_cjf.rand_gauss = _rand_gauss_fixed
+
 ak.behavior.update(vector.behavior)
 package_path = str(pathlib.Path(__file__).parent.parent.resolve())
 
@@ -307,11 +337,6 @@ jec_name_map = {
 }
 
 def apply_jerc(jets, jet_type: str, year: str, runkey: str):
-    #Create CorrectedJetFactory and apply jercs+variations to JetArray or FatJetArray
-
-    # Handle empty jet arrays - return unchanged to avoid IndexError in CorrectedJetsFactory
-    if ak.num(jets, axis=1) == 0:
-        return jets
 
     jerc_path =f"{package_path}/hbb/data/jerc"
     jec_path = f"{jerc_path}/{jec_eras[runkey]}"
