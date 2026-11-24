@@ -230,12 +230,13 @@ class categorizer(SkimmerABC):
         Muon Energy: `MuonPTScale and MuonPTResolution` defined in mupt_variations
         Jet Energy: `JES, JER, UES` defined in jerc_variations
         """
-        total_variations = (
-            ["nominal"]
-            + [f"{var}_{dir}" for var in jerc_variations for dir in ["Up", "Down"]]
-            + [f"{var}_{dir}" for var in mupt_variations for dir in ["Up", "Down"]]
-        )
-
+        total_variations = ["nominal"]  # only nominal needed for now; restore below for systematics
+        # total_variations = (
+        #     ["nominal"]
+        #     + [f"{var}_{dir}" for var in jerc_variations for dir in ["Up", "Down"]]
+        #     + [f"{var}_{dir}" for var in mupt_variations for dir in ["Up", "Down"]]
+        # )
+        
         """
         run processor for each shift defined in total_variations
         return output as dict {variation: output}
